@@ -3,8 +3,9 @@ const uri = "mongodb+srv://Matthew:%25jGvP8gKW%40_%2A2dL@cpen321-q2pnc.mongodb.n
 const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 var express = require('express');
 var app = express();
-//app.use(express.json);
+app.use(express.json());
 var db;
+var ObjectID = require('mongodb').ObjectID;
 const port = 3000;
 // var server = app.listen(8081, function(){
 //     var host = server.address().address;
@@ -20,8 +21,13 @@ client.connect(err => {
     //client.close();
 });
 app.get('/', (req, res) => {
-    return res.send("memes");
+    var id = new ObjectID(req.params.id);
+    console.log(id);
+    console.log("request recieved");
+    console.log(db.collection("Users").findOne({_id: id}).toJSON);
+    return res.json(db.collection("Users").findOne({_id: id}));
 });
+
 app.post('/', function (req, res) {
     res.end();
 });
