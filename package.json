@@ -2,7 +2,8 @@
   "name": "Backend321",
   "version": "1.0.0",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "body-parser": "latest"
   },
   "devDependencies": {
     "mongodb": "^3.3.2"
