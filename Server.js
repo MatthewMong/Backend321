@@ -33,18 +33,18 @@ app.get('/', (req, res) => {
         res.send(result);})
 });
 
-app.get('/Users', (req, res) => {
-    var id = new ObjectID(JSON.stringify(req.body.id));//req.params.id
-    console.log(JSON.stringify(req.body));
-    db.collection('Users').findOne({'_id':id})
-        .then(function(doc) {
-            if(!doc)
-                throw new Error('No record found.');
-            console.log(doc);//else case
-        });
-
+app.get('/Users/:id', (req, res) => {
+    var id = new ObjectID(req.params.id);//req.params.id
+    db.collection("Users").find({'_id':id}).toArray((err,result) => {
+        res.send(result);})
 });
 
+// app.get('/Location/:latitude&:longitude', (req, res) => {
+//     var latitude = req.params.latitude;
+//     var longitude = req.params.longitude;
+//     db.collection("Users").find({'_id':id}).toArray((err,result) => {
+//         res.send(result);})
+// });
 app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.json({
