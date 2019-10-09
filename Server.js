@@ -18,7 +18,7 @@ const port = 3000;
 
 client.connect(err => {
     if (err) return console.log(err);
-    database = client.db('Data');
+    db = client.db('Data');
     console.log("successful connect");
     // perform actions on the collection object
     //client.close();
