@@ -1,5 +1,3 @@
-
-
 const MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://kswic:rqerBR73CjIcOnaB@test-cluster-323xs.azure.mongodb.net/test?retryWrites=true&w=majority";
 //const uri = "mongodb+srv://Matthew:%25jGvP8gKW%40_%2A2dL@cpen321-q2pnc.mongodb.net/test?retryWrites=true&w=majority";
@@ -7,7 +5,7 @@ const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: 
 var express = require('express');
 //var bodyParser = require('body-parser');
 var app = express();
-var db;
+var database;
 var ObjectID = require('mongodb').ObjectID;
 const port = 3000;
 
@@ -20,7 +18,7 @@ app.use(express.json());
 
 client.connect(err => {
     if (err) return console.log(err);
-    db = client.db('Data');
+    database = client.db('Data');
     console.log("successful connect");
     // perform actions on the collection object
     //client.close();
@@ -32,27 +30,27 @@ client.connect(err => {
 //     console.log(db.collection("Users").findOne({_id: id}));
 //     return res.json(db.collection("Users").findOne({_id: id}));
 // });
-app.get('/', (req, res) => {
-    db.collection("Users").find().toArray((err,result) => {
+app.get('/Users', (req, res) => {
+    database.collection("Users").find().toArray((err,result) => {
         res.send(result);})
 });
 
 app.get('/Users/:id', (req, res) => {
     var id = new ObjectID(req.params.id);//req.params.id
-    db.collection("Users").find({'_id':id}).toArray((err,result) => {
+    database.collection("Users").find({'_id':id}).toArray((err,result) => {
         res.send(result);})
 });
 
 app.get('/Events/:id', (req, res) => {
     var id = new ObjectID(req.params.id);//req.params.id
-    db.collection("Events").find({'_id':id}).toArray((err,result) => {
+    database.collection("Events").find({'_id':id}).toArray((err,result) => {
         res.send(result);})
 });
 
 // app.get('/Location/:latitude&:longitude', (req, res) => {
 //     var latitude = req.params.latitude;
 //     var longitude = req.params.longitude;
-//     db.collection("Users").find({'_id':id}).toArray((err,result) => {
+//     database.collection("Users").find({'_id':id}).toArray((err,result) => {
 //         res.send(result);})
 // });
 app.use((err, req, res, next) => {
@@ -71,7 +69,7 @@ app.post('/', function (req, res) {
 Function: Posts Events into ./Event
  */
 app.post('/Events', (req, res) => {
-    db.collection('Events').save(req.body, (err, result) => {
+    database.collection('Events').save(req.body, (err, result) => {
         if (err) return console.log(err);
         console.log('Event Saved to Database');
     })
@@ -83,7 +81,7 @@ app.post('/Events', (req, res) => {
 Function: Posts Users into ./User
  */
 app.post('/Users', (req, res) => {
-    db.collection('Users').save(req.body, (err, result) => {
+    database.collection('Users').save(req.body, (err, result) => {
         if (err) return console.log(err);
         console.log('User Saved to Database');
     })
