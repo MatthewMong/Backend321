@@ -13,6 +13,7 @@ var ObjectID = require('mongodb').ObjectID;
 const port = 3000;
 
 
+
 // var server = app.listen(8081, function(){
 //     var host = server.address().address;
 //     var port = server.address().port;
@@ -59,14 +60,18 @@ app.post('/Events', function(req,res,next){
     next()
 }, function(req,res,next){
     var interests = req.body.Interests;
-    db.collection("Users").find(
-        {Interests : {$in: interests}}
-    ).toArray((err,result) =>{
-        if (err) return console.log(err);
-        console.log(result);
-        // res.send("Event Added ID:"+inserted_id+", Users:"+result._id);
-        // res.send(result);
-    })
+    if(interests.length >= 1 || interests !== undefined) {
+        db.collection("Users").find({
+            Interests: {$in: interests},
+            Active: true
+
+        }).toArray((err, result) => {
+            if (err) return console.log(err);
+            console.log(result);
+            // res.send("Event Added ID:"+inserted_id+", Users:"+result._id);
+            // res.send(result);
+        })
+    }
 });
 
 
