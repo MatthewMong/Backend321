@@ -1,10 +1,12 @@
 const MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://kswic:rqerBR73CjIcOnaB@test-cluster-323xs.azure.mongodb.net/test?retryWrites=true&w=majority";
-//const uri = "mongodb+srv://Matthew:%25jGvP8gKW%40_%2A2dL@cpen321-q2pnc.mongodb.net/test?retryWrites=true&w=majority";
+// const uri = "mongodb+srv://Matthew:%25jGvP8gKW%40_%2A2dL@cpen321-q2pnc.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 var express = require('express');
-//var bodyParser = require('body-parser');
 var app = express();
+var bodyParser = require('body-parser')
+//app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
+//app.use(bodyParser.json({ type: 'application/*+json' })); // parse various different custom JSON types as JSON
 app.use(express.json());
 var db;
 var ObjectID = require('mongodb').ObjectID;
@@ -48,20 +50,32 @@ app.post('/Users', function(req,res){
     });
 
 
-app.post('/Events', function(req,res){
-    db.collection("Users").insertOne(req.body, (err, result)=>{
+app.post('/Events', function(req,res,next){
+    db.collection("Events").insertOne(req.body, (err, result)=>{
         if (err) return console.log(err);
+        // var inserted_id= result.insertedId;
         res.send(result.insertedId);
     });
+    next()
+}, function(req,res,next){
+    var interests = req.body.Interests;
+    db.collection("Users").find(
+        {Interests : {$in: interests}}
+    ).toArray((err,result) =>{
+        if (err) return console.log(err);
+        console.log(result);
+        // res.send("Event Added ID:"+inserted_id+", Users:"+result._id);
+        // res.send(result);
+    })
 });
 
 
-app.get('/', (req, res) => {
+app.get('/Users', (req, res) => {
     db.collection("Users").find().toArray((err,result) => {
         res.send(result);})
 });
 
-//
+
 // app.post('/Users', (req,res) =>{
 //     console.log("triggered");
 //     console.log(req.body);
@@ -99,27 +113,29 @@ app.post('/', function (req, res) {
     res.end();
 });
 
-/*
-Function: Posts Events into ./Event
- */
-app.post('/Events', (req, res) => {
-    database.collection('Events').save(req.body, (err, result) => {
-        if (err) return console.log(err);
-        console.log('Event Saved to Database');
-    })
-});
+// /*
+// Function: Posts Events into ./Event
+//  */
+// app.post('/Events', (req, res, next) => {
+//     db.collection('Events').save(req.body, (err, result) => {
+//         if (err) return console.log(err);
+//         console.log('Event Saved to Database');
+//     })
+//
+// });
+
 
 
 //TODO: implement updating function/call (to update songe parameter of document/json)
 /*
 Function: Posts Users into ./User
  */
-app.post('/Users', (req, res) => {
-    database.collection('Users').save(req.body, (err, result) => {
-        if (err) return console.log(err);
-        console.log('User Saved to Database');
-    })
-});
+// app.post('/Users', (req, res) => {
+//     db.collection('Users').save(req.body, (err, result) => {
+//         if (err) return console.log(err);
+//         console.log('User Saved to Database');
+//     })
+// });
 
 var server = app.listen(port, function () {
     //var host = server.address().address
