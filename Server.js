@@ -10,7 +10,9 @@ var bodyParser = require('body-parser')
 app.use(express.json());
 var db;
 var ObjectID = require('mongodb').ObjectID;
+
 const port = 3000;
+const coord_var = 2.00001;
 
 
 
@@ -60,16 +62,20 @@ app.post('/Events', function(req,res,next){
     next()
 }, function(req,res,next){
     var interests = req.body.Interests;
+    var latitdec_upper = req.body.latdec + coord_var;
+    var latitdec_lower = req.body.latdec - coord_var;
+    var longitdec_upper = req.body.longdec + coord_var;
+    var longitdec_lower = req.body.longdec - coord_var;
     if(interests.length >= 1 || interests !== undefined) {
         db.collection("Users").find({
             Interests: {$in: interests},
-            Active: true
-
+            Active: true,
+            longdec : {$gte: (longitdec_lower), $lte: (longitdec_upper)},
+            latdec : {$gte: (latitdec_lower), $lte: (latitdec_upper)}
         }).toArray((err, result) => {
             if (err) return console.log(err);
             console.log(result);
-            // res.send("Event Added ID:"+inserted_id+", Users:"+result._id);
-            // res.send(result);
+            //TODO Do stuff with the array to find the best matches
         })
     }
 });
