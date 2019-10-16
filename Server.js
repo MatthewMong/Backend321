@@ -42,7 +42,31 @@ client.connect(err => {
 //         res.send("saved");
 //     })
 // });
-
+/*
+Updates user location whenerver user communicates with backend
+request must inlcude
+Parameter: user_id, user_longdec, user_latdec
+ */
+var get_user_location = function(req,res,next){
+    var longitdec = req.body.user_longdec;
+    var latitdec = req.body.user_latdec;
+    var user_id = req.body.user_id;
+    try {
+        db.collection("Users").updateOne(
+            { _id: {user_id}},
+            { $set:
+                    {
+                        longdec : longitdec,
+                        latdec : latitdec
+                    }
+            }
+        );
+    } catch (e) {
+        console.log(e);
+    }
+    next();
+};
+app.use(get_user_location);
 
 
 app.post('/Users', function(req,res){
@@ -52,15 +76,7 @@ app.post('/Users', function(req,res){
         });
     });
 
-
-app.post('/Events', function(req,res,next){
-    db.collection("Events").insertOne(req.body, (err, result)=>{
-        if (err) return console.log(err);
-        // var inserted_id= result.insertedId;
-        res.send(result.insertedId);
-    });
-    next()
-}, function(req,res,next){
+var match_users2events = function (req,res,next){
     var interests = req.body.Interests;
     var latitdec_upper = req.body.latdec + coord_var;
     var latitdec_lower = req.body.latdec - coord_var;
@@ -78,6 +94,19 @@ app.post('/Events', function(req,res,next){
             //TODO Do stuff with the array to find the best matches
         })
     }
+    next();
+};
+
+/*
+Creates events
+Parameters in req: name (name of event), Interests (for event), latdec (lat of event), longdec (long of event)....
+ */
+app.post('/Events', [match_users2events], function(req,res,next){
+    db.collection("Events").insertOne(req.body, (err, result)=>{
+        if (err) return console.log(err);
+        // var inserted_id= result.insertedId;
+        res.send(result.insertedId);
+    });
 });
 
 
