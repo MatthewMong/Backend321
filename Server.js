@@ -125,6 +125,11 @@ app.get('/Users', (req, res) => {
         res.send(result);
     })
 });
+app.get('/Events', (req, res) => {
+    db.collection("Events").find().toArray((err, result) => {
+        res.send(result);
+    })
+});
 
 
 // app.post('/Users', (req,res) =>{
