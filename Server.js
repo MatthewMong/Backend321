@@ -55,8 +55,12 @@ app.post('/Events', function(req,res){
 });
 
 
-app.get('/', (req, res) => {
+app.get('/Users', (req, res) => {
     db.collection("Users").find().toArray((err,result) => {
+        res.send(result);})
+});
+app.get('/Events', (req, res) => {
+    db.collection("Events").find().toArray((err,result) => {
         res.send(result);})
 });
 
