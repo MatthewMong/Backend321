@@ -13,7 +13,7 @@ const uri = "mongodb+srv://kswic:rqerBR73CjIcOnaB@test-cluster-323xs.azure.mongo
 const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 var express = require('express');
 var app = express();
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 //app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
 //app.use(bodyParser.json({ type: 'application/*+json' })); // parse various different custom JSON types as JSON
 app.use(express.json());
@@ -117,6 +117,11 @@ app.post('/Events', [match_users2events], function (req, res, next) {
         // var inserted_id= result.insertedId;
         res.send(result.insertedId);
     });
+    msg={
+        "title":"New event",
+        "body":"Please Join"
+    }
+    sendmessage('cbi6da7yD0Y:APA91bE6JaGY-9DCTkKJya9tggqdVIdGHvY3d6dugMUi8Odgot7Yb1T2ueDsVK_9u3KXwBDgeVIk8BIY9i5PwcZUcT03fU2WMXox2z2cgTYxbosKCOw_MDfcxFVCr5q1q4G2SG96f5gj', msg)
 });
 
 
@@ -201,7 +206,7 @@ var server = app.listen(port, function () {
 
 //firebase cloud messaging stuff
 function sendmessage(registrationToken, payload) {
-    var message = {data: payload, token: registrationToken};
+    var message = {notification: payload, token: registrationToken};
     admin.messaging().send(message)
         .then((response) => {
             // Response is a message ID string.
