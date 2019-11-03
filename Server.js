@@ -31,9 +31,9 @@ const ObjectID = require("mongodb").ObjectID;
  * Connect to MongoDB server
  */
 client.connect((err) => {
-  if (err) return err; // console.log(err);
+  if (err) return console.log(err);
   db = client.db("Data");
-  //console.log("successful connect");
+  console.log("successful connect");
 });
 
 // firebase cloud messaging stuff
@@ -48,10 +48,10 @@ function sendMessage(registrationToken, payload) {
     admin.messaging().send(message)
         .then((response) => {
             // Response is a message ID string.
-            //console.log("Successfully sent message:", response);
+            console.log("Successfully sent message:", response);
         })
         .catch((error) => {
-            //console.log("Error sending message:", error);
+            console.log("Error sending message:", error);
         });
 }
 
@@ -92,7 +92,7 @@ const get_user_location = function(req, res, next) {
         },
     );
   } catch (e) {
-    //console.log(e);
+    console.log(e);
   }
   next();
 };
@@ -105,7 +105,7 @@ app.use(get_user_location);
  */
 app.post("/Users", function(req, res) {
   db.collection("Users").insertOne(req.body, (err, result) => {
-    if (err) return err; //console.log(err);
+    if (err) return console.log(err);
     res.send(result.insertedId);
   });
 });
@@ -117,7 +117,7 @@ app.put("/Users/:id", function(req, res) {
   const id = new ObjectID(req.params.id);
   db.collection("Users").findOneAndUpdate({_id: id},
       {$set: req.body}, {new: true}, (err, result) => {
-        if (err) return err; //console.log(err);
+        if (err) return console.log(err);
         res.send(result);
       });
 });
@@ -129,7 +129,7 @@ app.put("/Events/:id", function(req, res) {
   const id = new ObjectID(req.params.id);
   db.collection("Events").findOneAndUpdate({_id: id},
       {$set: req.body}, {new: true}, (err, result) => {
-        if (err) return err; // console.log(err);
+        if (err) return console.log(err);
         res.send(result);
       });
 });
@@ -153,8 +153,8 @@ const match_users2events = function(req, res, next) {
       longdec: {$gte: (longitdec_lower), $lte: (longitdec_upper)},
       latdec: {$gte: (latitdec_lower), $lte: (latitdec_upper)},
     }).toArray((err, result) => {
-      if (err) return err; // console.log(err);
-      // console.log(result);
+      if (err) return console.log(err);
+      console.log(result);
       // TODO Do stuff with the array to find the best matches
     });
   }
@@ -170,8 +170,7 @@ Parameters in req: name (name of event), Interests (for event), latdec (lat of e
  */
 app.post("/Events", [match_users2events], function(req, res, next) {
   db.collection("Events").insertOne(req.body, (err, result) => {
-    if (err) return err;
-    //console.log(err);
+    if (err) return console.log(err);
     const msg = {
       EventName: req.body.Name,
       Location: req.body.Location,
@@ -204,7 +203,7 @@ app.get("/Events", (req, res) => {
  *
  */
 app.get("/Users/:id", (req, res) => {
-  //console.log("someone retrieved a user");
+  console.log("someone retrieved a user");
   const id = new ObjectID(req.params.id);// req.params.id
   db.collection("Users").find({"_id": id}).toArray((err, result) => {
     res.send(result);
@@ -241,5 +240,5 @@ app.post("/", function(req, res) {
 var server = app.listen(port, function() {
   // var host = server.address().address
   const port = server.address().port;
-  // console.log("App listening at %s!", port);
+  console.log("App listening at %s!", port);
 });
