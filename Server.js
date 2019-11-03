@@ -139,14 +139,12 @@ app.post('/Events', [match_users2events], function(req, res, next) {
     if (err) return console.log(err);
     msg={
       EventName: req.body.Name,
-      Location: req.body.Location
+      Location: req.body.Location,
     };
-    VolleyMessages(['5da616b81c9d4400008b451f','5da616b81c9d4400008b451f'],msg);
+    volleyMessages(['5da616b81c9d4400008b451f', '5da616b81c9d4400008b451f'], msg);
     // var inserted_id= result.insertedId;
     res.send(result.insertedId);
   });
-
-  //sendMessage('fev7MsN1fhY:APA91bG0j-lWW-3a1qkUqItdCxP0qghyrt4do8_2sqjpjf4vqq1aep1V2QWTfa3C7OAyxRejm0J98N46hkRbf72SNDbwBxmbyZXK9aQdyHTRZAQJ-o5tPJeeJfjRxiytIaEHiJzFqWaS', msg);
 });
 
 /**
@@ -200,14 +198,13 @@ app.post('/', function(req, res) {
 // TODO: implement updating function/call (to update songe parameter of document/json)
 
 // firebase cloud messaging stuff
-function VolleyMessages(UserID, payload) {
-  UserID.forEach(function(value){
+function volleyMessages(UserID, payload) {
+  UserID.forEach(function(value) {
     const id = new ObjectID(value);
-    db.collection('Users').find({'_id': id},{projection:{FirebaseToken:1,_id:0}}).toArray((err, result) => {
-      sendMessage(result[0].FirebaseToken,payload)
+    db.collection('Users').find({'_id': id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
+      sendMessage(result[0].FirebaseToken, payload);
     });
   });
-
 }
 
 /**
@@ -229,7 +226,8 @@ function sendMessage(registrationToken, payload) {
 
 /**
  * Initiate REST endpoints on specified port
- * @param port integer which specifies which port the REST endpoints are accessible at
+ * @param port integer which specifies which port
+ * the REST endpoints are accessible at
  */
 var server = app.listen(port, function() {
   // var host = server.address().address
