@@ -13,7 +13,7 @@ const uri = "mongodb+srv://kswic:rqerBR73CjIcOnaB@test-cluster-323xs.azure.mongo
 const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 var express = require('express');
 var app = express();
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 //app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
 //app.use(bodyParser.json({ type: 'application/*+json' })); // parse various different custom JSON types as JSON
 app.use(express.json());
@@ -27,6 +27,7 @@ client.connect(err => {
     if (err) return console.log(err);
     db = client.db('Data');
     console.log("successful connect");
+    sendmessage(buildnotification())
     // perform actions on the collection object
     //client.close();
 });
@@ -92,7 +93,7 @@ var match_users2events = function (req, res, next) {
     var latitdec_lower = req.body.latdec - coord_var;
     var longitdec_upper = req.body.longdec + coord_var;
     var longitdec_lower = req.body.longdec - coord_var;
-    if (interests.length >= 1 || interests !== undefined) {
+    if (interests.length >= 1 || true) {
         db.collection("Users").find({
             Interests: {$in: interests},
             Active: true,
@@ -200,8 +201,12 @@ var server = app.listen(port, function () {
 });
 
 //firebase cloud messaging stuff
-function sendmessage(registrationToken, payload) {
-    var message = {data: payload, token: registrationToken};
+
+/**
+ * sendmessage uses the Firebase-admin console to send a payload to a specific device
+ * @param message JSON object created by buildnotification
+ */
+function sendmessage(message) {
     admin.messaging().send(message)
         .then((response) => {
             // Response is a message ID string.
@@ -212,4 +217,19 @@ function sendmessage(registrationToken, payload) {
         });
 }
 
+temp_token= 'cbi6da7yD0Y:APA91bE6JaGY-9DCTkKJya9tggqdVIdGHvY3d6dugMUi8Odgot7Yb1T2ueDsVK_9u3KXwBDgeVIk8BIY9i5PwcZUcT03fU2WMXox2z2cgTYxbosKCOw_MDfcxFVCr5q1q4G2SG96f5gj'
+/**
+Used to build a notification, attach a json object for data and a registration token as a string, this then becomes an FCM payload
+ @param stuff is a JSON object which acts as data payload for notification
+ @param token is the FCM token retrieved from the user
+ @return JSON object with FCM formatting
+ */
+function buildnotification(stuff, token) {
+    var registrationToken = token;
+    var message = {
+            data: stuff,
+        token: registrationToken
+    };
+    return message
+}
 //app.listen(port, () => console.log(`Example app listening on port ${port}!`));
