@@ -36,6 +36,33 @@ client.connect((err) => {
   console.log("successful connect");
 });
 
+// firebase cloud messaging stuff
+function volleyMessages(UserID, payload) {
+    UserID.forEach(function(value) {
+        const id = new ObjectID(value);
+        db.collection("Users").find({"_id": id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
+            sendMessage(result[0].FirebaseToken, payload);
+        });
+    });
+}
+
+/**
+ *
+ * @param registrationToken
+ * @param payload
+ */
+function sendMessage(registrationToken, payload) {
+    const message = {data: payload, token: registrationToken};
+    admin.messaging().send(message)
+        .then((response) => {
+            // Response is a message ID string.
+            console.log("Successfully sent message:", response);
+        })
+        .catch((error) => {
+            console.log("Error sending message:", error);
+        });
+}
+
 /**
  *
  * @param req
@@ -197,32 +224,6 @@ app.post("/", function(req, res) {
 
 // TODO: implement updating function/call (to update songe parameter of document/json)
 
-// firebase cloud messaging stuff
-function volleyMessages(UserID, payload) {
-  UserID.forEach(function(value) {
-    const id = new ObjectID(value);
-    db.collection("Users").find({"_id": id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
-      sendMessage(result[0].FirebaseToken, payload);
-    });
-  });
-}
-
-/**
- *
- * @param registrationToken
- * @param payload
- */
-function sendMessage(registrationToken, payload) {
-  const message = {data: payload, token: registrationToken};
-  admin.messaging().send(message)
-      .then((response) => {
-        // Response is a message ID string.
-        console.log("Successfully sent message:", response);
-      })
-      .catch((error) => {
-        console.log("Error sending message:", error);
-      });
-}
 
 /**
  * Initiate REST endpoints on specified port
