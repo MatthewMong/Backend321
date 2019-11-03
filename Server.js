@@ -37,14 +37,6 @@ client.connect((err) => {
 });
 
 // firebase cloud messaging stuff
-function volleyMessages(UserID, payload) {
-    UserID.forEach(function(value) {
-        const id = new ObjectID(value);
-        db.collection("Users").find({"_id": id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
-            sendMessage(result[0].FirebaseToken, payload);
-        });
-    });
-}
 
 /**
  *
@@ -62,6 +54,21 @@ function sendMessage(registrationToken, payload) {
             console.log("Error sending message:", error);
         });
 }
+
+/**
+ *
+ * @param UserID
+ * @param payload
+ */
+function volleyMessages(UserID, payload) {
+    UserID.forEach(function(value) {
+        const id = new ObjectID(value);
+        db.collection("Users").find({"_id": id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
+            sendMessage(result[0].FirebaseToken, payload);
+        });
+    });
+}
+
 
 /**
  *
