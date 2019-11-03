@@ -31,7 +31,7 @@ const ObjectID = require("mongodb").ObjectID;
  * Connect to MongoDB server
  */
 client.connect((err) => {
-  if (err) return; // console.log(err);
+  if (err) return err; // console.log(err);
   db = client.db("Data");
   //console.log("successful connect");
 });
@@ -105,7 +105,7 @@ app.use(get_user_location);
  */
 app.post("/Users", function(req, res) {
   db.collection("Users").insertOne(req.body, (err, result) => {
-    if (err) return; //console.log(err);
+    if (err) return err; //console.log(err);
     res.send(result.insertedId);
   });
 });
@@ -117,7 +117,7 @@ app.put("/Users/:id", function(req, res) {
   const id = new ObjectID(req.params.id);
   db.collection("Users").findOneAndUpdate({_id: id},
       {$set: req.body}, {new: true}, (err, result) => {
-        if (err) return; //console.log(err);
+        if (err) return err; //console.log(err);
         res.send(result);
       });
 });
@@ -129,7 +129,7 @@ app.put("/Events/:id", function(req, res) {
   const id = new ObjectID(req.params.id);
   db.collection("Events").findOneAndUpdate({_id: id},
       {$set: req.body}, {new: true}, (err, result) => {
-        if (err) return; // console.log(err);
+        if (err) return err; // console.log(err);
         res.send(result);
       });
 });
@@ -153,7 +153,7 @@ const match_users2events = function(req, res, next) {
       longdec: {$gte: (longitdec_lower), $lte: (longitdec_upper)},
       latdec: {$gte: (latitdec_lower), $lte: (latitdec_upper)},
     }).toArray((err, result) => {
-      if (err) return; // console.log(err);
+      if (err) return err; // console.log(err);
       // console.log(result);
       // TODO Do stuff with the array to find the best matches
     });
@@ -170,7 +170,7 @@ Parameters in req: name (name of event), Interests (for event), latdec (lat of e
  */
 app.post("/Events", [match_users2events], function(req, res, next) {
   db.collection("Events").insertOne(req.body, (err, result) => {
-    if (err) return;
+    if (err) return err;
     //console.log(err);
     const msg = {
       EventName: req.body.Name,
