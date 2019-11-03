@@ -5,26 +5,26 @@ const coord_var = 2.00001;
  *Initiate Firebase Cloud Messaging connection
  * @type {admin}
  */
-const admin = require('firebase-admin');
-const serviceAccount = require('../Backend321/thissucks-b5ac7-firebase-adminsdk-389of-ad03ab0675');
+const admin = require("firebase-admin");
+const serviceAccount = require("../Backend321/thissucks-b5ac7-firebase-adminsdk-389of-ad03ab0675");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://thissucks-b5ac7.firebaseio.com',
+  databaseURL: "https://thissucks-b5ac7.firebaseio.com",
 });
 
 /**
  * Initialize MongoDB constants and middleware (express)
  * @type {MongoClient}
  */
-const MongoClient = require('mongodb').MongoClient;
-const uri = 'mongodb+srv://kswic:rqerBR73CjIcOnaB@test-cluster-323xs.azure.mongodb.net/test?retryWrites=true&w=majority';
+const MongoClient = require("mongodb").MongoClient;
+const uri = "mongodb+srv://kswic:rqerBR73CjIcOnaB@test-cluster-323xs.azure.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
-const express = require('express');
+const express = require("express");
 const app = express();
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 app.use(express.json());
 let db;
-const ObjectID = require('mongodb').ObjectID;
+const ObjectID = require("mongodb").ObjectID;
 
 
 /**
@@ -32,8 +32,8 @@ const ObjectID = require('mongodb').ObjectID;
  */
 client.connect((err) => {
   if (err) return console.log(err);
-  db = client.db('Data');
-  console.log('successful connect');
+  db = client.db("Data");
+  console.log("successful connect");
 });
 
 /**
@@ -47,7 +47,7 @@ const get_user_location = function(req, res, next) {
   const latitdec = req.body.user_latdec;
   const user_id = req.body.user_id;
   try {
-    db.collection('Users').updateOne(
+    db.collection("Users").updateOne(
         {_id: {user_id}},
         {
           $set:
@@ -69,8 +69,8 @@ app.use(get_user_location);
  * {Name:String, Age:Integer, Location:}
  * Response is MongoDB ObjectID for the newly created document
  */
-app.post('/Users', function(req, res) {
-  db.collection('Users').insertOne(req.body, (err, result) => {
+app.post("/Users", function(req, res) {
+  db.collection("Users").insertOne(req.body, (err, result) => {
     if (err) return console.log(err);
     res.send(result.insertedId);
   });
@@ -79,9 +79,9 @@ app.post('/Users', function(req, res) {
 /**
  *
  */
-app.put('/Users/:id', function(req, res) {
+app.put("/Users/:id", function(req, res) {
   const id = new ObjectID(req.params.id);
-  db.collection('Users').findOneAndUpdate({_id: id},
+  db.collection("Users").findOneAndUpdate({_id: id},
       {$set: req.body}, {new: true}, (err, result) => {
         if (err) return console.log(err);
         res.send(result);
@@ -91,9 +91,9 @@ app.put('/Users/:id', function(req, res) {
 /**
  *
  */
-app.put('/Events/:id', function(req, res) {
+app.put("/Events/:id", function(req, res) {
   const id = new ObjectID(req.params.id);
-  db.collection('Events').findOneAndUpdate({_id: id},
+  db.collection("Events").findOneAndUpdate({_id: id},
       {$set: req.body}, {new: true}, (err, result) => {
         if (err) return console.log(err);
         res.send(result);
@@ -112,8 +112,8 @@ const match_users2events = function(req, res, next) {
   const latitdec_lower = req.body.latdec - coord_var;
   const longitdec_upper = req.body.longdec + coord_var;
   const longitdec_lower = req.body.longdec - coord_var;
-  if (interests.length >= 1 || interests !== undefined) {
-    db.collection('Users').find({
+  if (interests.length >= 1 || true) {
+    db.collection("Users").find({
       Interests: {$in: interests},
       Active: true,
       longdec: {$gte: (longitdec_lower), $lte: (longitdec_upper)},
@@ -134,14 +134,14 @@ Parameters in req: name (name of event), Interests (for event), latdec (lat of e
 /**
  *
  */
-app.post('/Events', [match_users2events], function(req, res, next) {
-  db.collection('Events').insertOne(req.body, (err, result) => {
+app.post("/Events", [match_users2events], function(req, res, next) {
+  db.collection("Events").insertOne(req.body, (err, result) => {
     if (err) return console.log(err);
-    msg={
+    const msg = {
       EventName: req.body.Name,
       Location: req.body.Location,
     };
-    volleyMessages(['5da616b81c9d4400008b451f', '5da616b81c9d4400008b451f'], msg);
+    volleyMessages(["5da616b81c9d4400008b451f", "5da616b81c9d4400008b451f"], msg);
     // var inserted_id= result.insertedId;
     res.send(result.insertedId);
   });
@@ -150,8 +150,8 @@ app.post('/Events', [match_users2events], function(req, res, next) {
 /**
  *
  */
-app.get('/Users', (req, res) => {
-  db.collection('Users').find().toArray((err, result) => {
+app.get("/Users", (req, res) => {
+  db.collection("Users").find().toArray((err, result) => {
     res.send(result);
   });
 });
@@ -159,8 +159,8 @@ app.get('/Users', (req, res) => {
 /**
  *
  */
-app.get('/Events', (req, res) => {
-  db.collection('Events').find().toArray((err, result) => {
+app.get("/Events", (req, res) => {
+  db.collection("Events").find().toArray((err, result) => {
     res.send(result);
   });
 });
@@ -168,10 +168,10 @@ app.get('/Events', (req, res) => {
 /**
  *
  */
-app.get('/Users/:id', (req, res) => {
-  console.log('someone retrieved a user');
+app.get("/Users/:id", (req, res) => {
+  console.log("someone retrieved a user");
   const id = new ObjectID(req.params.id);// req.params.id
-  db.collection('Users').find({'_id': id}).toArray((err, result) => {
+  db.collection("Users").find({"_id": id}).toArray((err, result) => {
     res.send(result);
   });
 });
@@ -191,7 +191,7 @@ app.use((err, req, res, next) => {
 /**
  *
  */
-app.post('/', function(req, res) {
+app.post("/", function(req, res) {
   res.end();
 });
 
@@ -201,7 +201,7 @@ app.post('/', function(req, res) {
 function volleyMessages(UserID, payload) {
   UserID.forEach(function(value) {
     const id = new ObjectID(value);
-    db.collection('Users').find({'_id': id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
+    db.collection("Users").find({"_id": id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
       sendMessage(result[0].FirebaseToken, payload);
     });
   });
@@ -217,10 +217,10 @@ function sendMessage(registrationToken, payload) {
   admin.messaging().send(message)
       .then((response) => {
         // Response is a message ID string.
-        console.log('Successfully sent message:', response);
+        console.log("Successfully sent message:", response);
       })
       .catch((error) => {
-        console.log('Error sending message:', error);
+        console.log("Error sending message:", error);
       });
 }
 
@@ -232,5 +232,5 @@ function sendMessage(registrationToken, payload) {
 var server = app.listen(port, function() {
   // var host = server.address().address
   const port = server.address().port;
-  console.log('App listening at %s!', port);
+  console.log("App listening at %s!", port);
 });
