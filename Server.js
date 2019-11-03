@@ -111,11 +111,14 @@ app.post("/Users", function(req, res) {
 });
 
 /**
- *
+ * Put endpoint for REST Api, url has the extension
+ * /collection/id to specify the collection and object_id that needs to be updated
+ * attach updated json file in the data package.
+ * Returns updated categories and status.
  */
-app.put("/Users/:id", function(req, res) {
+app.put("/:collection/:id", function(req, res) {
   const id = new ObjectID(req.params.id);
-  db.collection("Users").findOneAndUpdate({_id: id},
+  db.collection(req.params.collection).findOneAndUpdate({_id: id},
       {$set: req.body}, {new: true}, (err, result) => {
         if (err) return console.log(err);
         res.send(result);
@@ -125,14 +128,15 @@ app.put("/Users/:id", function(req, res) {
 /**
  *
  */
-app.put("/Events/:id", function(req, res) {
-  const id = new ObjectID(req.params.id);
-  db.collection("Events").findOneAndUpdate({_id: id},
-      {$set: req.body}, {new: true}, (err, result) => {
-        if (err) return console.log(err);
-        res.send(result);
-      });
+app.delete("/:collection/:id", function(req, res) {
+    const id = new ObjectID(req.params.id);
+    db.collection(req.params.collection).deleteOne({_id: id}, (err, result)=> {
+            if (err) return console.log(err);
+            res.send(result);
+        });
 });
+
+
 
 /**
  *
