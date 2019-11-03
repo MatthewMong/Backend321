@@ -2,10 +2,9 @@ const port = 3000;
 const coord_var = 2.00001;
 
 /**
- *
+ *Initiate Firebase Cloud Messaging connection
  * @type {admin}
  */
-
 const admin = require('firebase-admin');
 const serviceAccount = require('../Backend321/thissucks-b5ac7-firebase-adminsdk-389of-ad03ab0675');
 admin.initializeApp({
@@ -13,7 +12,10 @@ admin.initializeApp({
   databaseURL: 'https://thissucks-b5ac7.firebaseio.com',
 });
 
-// Init of Mongo Backend for database
+/**
+ * Initialize MongoDB constants and middleware (express)
+ * @type {MongoClient}
+ */
 const MongoClient = require('mongodb').MongoClient;
 const uri = 'mongodb+srv://kswic:rqerBR73CjIcOnaB@test-cluster-323xs.azure.mongodb.net/test?retryWrites=true&w=majority';
 const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
@@ -34,12 +36,6 @@ client.connect((err) => {
   console.log('successful connect');
 });
 
-
-/*
-Updates user location whenerver user communicates with backend
-request must inlcude
-Parameter: user_id, user_longdec, user_latdec
- */
 /**
  *
  * @param req
@@ -69,7 +65,9 @@ const get_user_location = function(req, res, next) {
 app.use(get_user_location);
 
 /**
- *
+ * Add user to MongoDB, request body should be a JSON object of the format
+ * {Name:String, Age:Integer, Location:}
+ * Response is MongoDB ObjectID for the newly created document
  */
 app.post('/Users', function(req, res) {
   db.collection('Users').insertOne(req.body, (err, result) => {
@@ -139,14 +137,16 @@ Parameters in req: name (name of event), Interests (for event), latdec (lat of e
 app.post('/Events', [match_users2events], function(req, res, next) {
   db.collection('Events').insertOne(req.body, (err, result) => {
     if (err) return console.log(err);
+    msg={
+      EventName: req.body.Name,
+      Location: req.body.Location
+    };
+    VolleyMessages(['5da616b81c9d4400008b451f','5da616b81c9d4400008b451f'],msg);
     // var inserted_id= result.insertedId;
     res.send(result.insertedId);
   });
-  msg={
-    'title': 'New event',
-    'body': 'Please Join',
-  };
-  sendmessage('fev7MsN1fhY:APA91bG0j-lWW-3a1qkUqItdCxP0qghyrt4do8_2sqjpjf4vqq1aep1V2QWTfa3C7OAyxRejm0J98N46hkRbf72SNDbwBxmbyZXK9aQdyHTRZAQJ-o5tPJeeJfjRxiytIaEHiJzFqWaS', msg);
+
+  //sendMessage('fev7MsN1fhY:APA91bG0j-lWW-3a1qkUqItdCxP0qghyrt4do8_2sqjpjf4vqq1aep1V2QWTfa3C7OAyxRejm0J98N46hkRbf72SNDbwBxmbyZXK9aQdyHTRZAQJ-o5tPJeeJfjRxiytIaEHiJzFqWaS', msg);
 });
 
 /**
@@ -200,13 +200,23 @@ app.post('/', function(req, res) {
 // TODO: implement updating function/call (to update songe parameter of document/json)
 
 // firebase cloud messaging stuff
+function VolleyMessages(UserID, payload) {
+  UserID.forEach(function(value){
+    const id = new ObjectID(value);
+    db.collection('Users').find({'_id': id},{projection:{FirebaseToken:1,_id:0}}).toArray((err, result) => {
+      sendMessage(result[0].FirebaseToken,payload)
+    });
+  });
+
+}
+
 /**
  *
  * @param registrationToken
  * @param payload
  */
-function sendmessage(registrationToken, payload) {
-  const message = {notification: payload, token: registrationToken};
+function sendMessage(registrationToken, payload) {
+  const message = {data: payload, token: registrationToken};
   admin.messaging().send(message)
       .then((response) => {
         // Response is a message ID string.
