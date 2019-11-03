@@ -1,5 +1,5 @@
 const port = 3000;
-const coord_var = 2.00001;
+const coordVar = 2.00001;
 
 /**
  *Initiate Firebase Cloud Messaging connection
@@ -21,7 +21,6 @@ const uri = "mongodb+srv://kswic:rqerBR73CjIcOnaB@test-cluster-323xs.azure.mongo
 const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
 app.use(express.json());
 let db;
 const ObjectID = require("mongodb").ObjectID;
@@ -39,34 +38,35 @@ client.connect((err) => {
 // firebase cloud messaging stuff
 
 /**
- *
- * @param registrationToken
- * @param payload
+ * Basic notification function for FCM, sends a data packet
+ * which is specified by payload to the specified user
+ * @param registrationToken string should be retrieved from MongoDB or Device
+ * @param payload JSON object to be delivered
  */
 function sendMessage(registrationToken, payload) {
-    const message = {data: payload, token: registrationToken};
-    admin.messaging().send(message)
-        .then((response) => {
-            // Response is a message ID string.
-            console.log("Successfully sent message:", response);
-        })
-        .catch((error) => {
-            console.log("Error sending message:", error);
-        });
+  const message = {data: payload, token: registrationToken};
+  admin.messaging().send(message)
+      .then((response) => {
+        // Response is a message ID string.
+        console.log("Successfully sent message:", response);
+      })
+      .catch((error) => {
+        console.log("Error sending message:", error);
+      });
 }
 
 /**
- *
- * @param UserID
- * @param payload
+ * Send message to multiple users using FCM
+ * @param UserID is an array, containing MongoDB ids as strings
+ * @param payload JSON object to be delivered
  */
 function volleyMessages(UserID, payload) {
-    UserID.forEach(function(value) {
-        const id = new ObjectID(value);
-        db.collection("Users").find({"_id": id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
-            sendMessage(result[0].FirebaseToken, payload);
-        });
+  UserID.forEach(function(value) {
+    const id = new ObjectID(value);
+    db.collection("Users").find({"_id": id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
+      sendMessage(result[0].FirebaseToken, payload);
     });
+  });
 }
 
 
@@ -126,16 +126,17 @@ app.put("/:collection/:id", function(req, res) {
 });
 
 /**
- *
+ * Delete endpoint for REST Api, url has the extension
+ * /collection/id to specify the collection and object_id that needs removed
+ * returns confirmation or error
  */
 app.delete("/:collection/:id", function(req, res) {
-    const id = new ObjectID(req.params.id);
-    db.collection(req.params.collection).deleteOne({_id: id}, (err, result)=> {
-            if (err) return console.log(err);
-            res.send(result);
-        });
+  const id = new ObjectID(req.params.id);
+  db.collection(req.params.collection).deleteOne({_id: id}, (err, result)=> {
+    if (err) return console.log(err);
+    res.send(result);
+  });
 });
-
 
 
 /**
@@ -146,16 +147,16 @@ app.delete("/:collection/:id", function(req, res) {
  */
 const match_users2events = function(req, res, next) {
   const interests = req.body.Interests;
-  const latitdec_upper = req.body.latdec + coord_var;
-  const latitdec_lower = req.body.latdec - coord_var;
-  const longitdec_upper = req.body.longdec + coord_var;
-  const longitdec_lower = req.body.longdec - coord_var;
+  const latitDecUpper = req.body.latdec + coordVar;
+  const latitDecLower = req.body.latdec - coordVar;
+  const longitDecUpper = req.body.longdec + coordVar;
+  const longitDecLower = req.body.longdec - coordVar;
   if (interests.length >= 1 || true) {
     db.collection("Users").find({
       Interests: {$in: interests},
       Active: true,
-      longdec: {$gte: (longitdec_lower), $lte: (longitdec_upper)},
-      latdec: {$gte: (latitdec_lower), $lte: (latitdec_upper)},
+      longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
+      latdec: {$gte: (latitDecLower), $lte: (latitDecUpper)},
     }).toArray((err, result) => {
       if (err) return console.log(err);
       console.log(result);
@@ -215,7 +216,7 @@ app.get("/Users/:id", (req, res) => {
 });
 
 /**
- *
+ * Standard error handler
  */
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
@@ -227,7 +228,8 @@ app.use((err, req, res, next) => {
 });
 
 /**
- *
+ * Basic middleware test function
+ * should return a valid response if connected
  */
 app.post("/", function(req, res) {
   res.end();
