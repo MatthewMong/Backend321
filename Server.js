@@ -25,7 +25,6 @@ app.use(express.json());
 let db;
 const ObjectID = require("mongodb").ObjectID;
 
-
 /**
  * Connect to MongoDB server
  */
@@ -47,7 +46,7 @@ function sendMessage(registrationToken, payload) {
   const message = {data: payload, token: registrationToken};
   admin.messaging().send(message)
       .then((response) => {
-        // Response is a message ID string.
+      // Response is a message ID string.
         console.log("Successfully sent message:", response);
       })
       .catch((error) => {
@@ -63,12 +62,11 @@ function sendMessage(registrationToken, payload) {
 function volleyMessages(UserID, payload) {
   UserID.forEach(function(value) {
     const id = new ObjectID(value);
-    db.collection("Users").find({"_id": id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
+    db.collection("Users").find({_id: id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
       sendMessage(result[0].FirebaseToken, payload);
     });
   });
 }
-
 
 /**
  *
@@ -132,12 +130,11 @@ app.put("/:collection/:id", function(req, res) {
  */
 app.delete("/:collection/:id", function(req, res) {
   const id = new ObjectID(req.params.id);
-  db.collection(req.params.collection).deleteOne({_id: id}, (err, result)=> {
+  db.collection(req.params.collection).deleteOne({_id: id}, (err, result) => {
     if (err) return console.log(err);
     res.send(result);
   });
 });
-
 
 /**
  *
@@ -171,7 +168,10 @@ Creates events
 Parameters in req: name (name of event), Interests (for event), latdec (lat of event), longdec (long of event)....
  */
 /**
- *
+ * POST endpoint for REST Api, url has the extension
+ * /Events/id to specify event that needs to be added
+ * attach updated json file in the data package.
+ * Will automatically match users and trigger notifications
  */
 app.post("/Events", [match_users2events], function(req, res, next) {
   db.collection("Events").insertOne(req.body, (err, result) => {
@@ -187,7 +187,8 @@ app.post("/Events", [match_users2events], function(req, res, next) {
 });
 
 /**
- *
+ * GET endpoint for REST Api, url has the extension /Users
+ * will return all users in collection as JSON object
  */
 app.get("/Users", (req, res) => {
   db.collection("Users").find().toArray((err, result) => {
@@ -196,7 +197,8 @@ app.get("/Users", (req, res) => {
 });
 
 /**
- *
+ * GET endpoint for REST Api, url has the extension /Events
+ * will return all events in collection as JSON object
  */
 app.get("/Events", (req, res) => {
   db.collection("Events").find().toArray((err, result) => {
@@ -205,12 +207,14 @@ app.get("/Events", (req, res) => {
 });
 
 /**
- *
+ * GET endpoint for REST Api, url has the extension /Users/id
+ * where id is the MongoDB id of user
+ * will return all user as a JSON object
  */
 app.get("/Users/:id", (req, res) => {
   console.log("someone retrieved a user");
   const id = new ObjectID(req.params.id);// req.params.id
-  db.collection("Users").find({"_id": id}).toArray((err, result) => {
+  db.collection("Users").find({_id: id}).toArray((err, result) => {
     res.send(result);
   });
 });
@@ -237,13 +241,12 @@ app.post("/", function(req, res) {
 
 // TODO: implement updating function/call (to update songe parameter of document/json)
 
-
 /**
  * Initiate REST endpoints on specified port
  * @param port integer which specifies which port
  * the REST endpoints are accessible at
  */
-var server = app.listen(port, function() {
+const server = app.listen(port, function() {
   // var host = server.address().address
   const port = server.address().port;
   console.log("App listening at %s!", port);
