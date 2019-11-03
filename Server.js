@@ -1,4 +1,11 @@
-//Init of Firebase backend for FCM
+const port = 3000;
+const coord_var = 2.00001;
+
+/**
+ *
+ * @type {admin}
+ */
+
 var admin = require("firebase-admin");
 var serviceAccount = require("../Backend321/thissucks-b5ac7-firebase-adminsdk-389of-ad03ab0675");
 admin.initializeApp({
@@ -9,32 +16,36 @@ admin.initializeApp({
 //Init of Mongo Backend for database
 const MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://kswic:rqerBR73CjIcOnaB@test-cluster-323xs.azure.mongodb.net/test?retryWrites=true&w=majority";
-// const uri = "mongodb+srv://Matthew:%25jGvP8gKW%40_%2A2dL@cpen321-q2pnc.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-//app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
-//app.use(bodyParser.json({ type: 'application/*+json' })); // parse various different custom JSON types as JSON
 app.use(express.json());
 var db;
 var ObjectID = require('mongodb').ObjectID;
 
-const port = 3000;
-const coord_var = 2.00001;
 
+/**
+ * Connect to MongoDB server
+ */
 client.connect(err => {
     if (err) return console.log(err);
     db = client.db('Data');
     console.log("successful connect");
-    // perform actions on the collection object
-    //client.close();
 });
+
+
 
 /*
 Updates user location whenerver user communicates with backend
 request must inlcude
 Parameter: user_id, user_longdec, user_latdec
+ */
+/**
+ *
+ * @param req
+ * @param res
+ * @param next
  */
 var get_user_location = function (req, res, next) {
     var longitdec = req.body.user_longdec;
@@ -58,7 +69,9 @@ var get_user_location = function (req, res, next) {
 };
 app.use(get_user_location);
 
-
+/**
+ *
+ */
 app.post('/Users', function (req, res) {
     db.collection("Users").insertOne(req.body, (err, result) => {
         if (err) return console.log(err);
@@ -66,6 +79,9 @@ app.post('/Users', function (req, res) {
     });
 });
 
+/**
+ *
+ */
 app.put('/Users/:id', function (req, res) {
     var id = new ObjectID(req.params.id);
     db.collection("Users").findOneAndUpdate({_id: id},
@@ -75,7 +91,9 @@ app.put('/Users/:id', function (req, res) {
         });
 });
 
-
+/**
+ *
+ */
 app.put('/Events/:id', function (req, res) {
     var id = new ObjectID(req.params.id);
     db.collection("Events").findOneAndUpdate({_id: id},
@@ -85,7 +103,12 @@ app.put('/Events/:id', function (req, res) {
         });
 });
 
-
+/**
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
 var match_users2events = function (req, res, next) {
     var interests = req.body.Interests;
     var latitdec_upper = req.body.latdec + coord_var;
@@ -111,6 +134,9 @@ var match_users2events = function (req, res, next) {
 Creates events
 Parameters in req: name (name of event), Interests (for event), latdec (lat of event), longdec (long of event)....
  */
+/**
+ *
+ */
 app.post('/Events', [match_users2events], function (req, res, next) {
     db.collection("Events").insertOne(req.body, (err, result) => {
         if (err) return console.log(err);
@@ -121,34 +147,30 @@ app.post('/Events', [match_users2events], function (req, res, next) {
         "title":"New event",
         "body":"Please Join"
     };
-    sendmessage('dfKPYuMv5ec:APA91bGQX1tyWO3WoE4iGEf5ELKaeKLYNQj5Skfwo_avF_i_jw8rqjEvzvRVZ1hOHUZlzoxvuDgEz6Jin2E-XAkbgJAYjj80OELP-SwM8hWRVpx8wJ-gz3G_uh0stV6bsUE_EgYiNe6O', msg)
+    sendmessage('fev7MsN1fhY:APA91bG0j-lWW-3a1qkUqItdCxP0qghyrt4do8_2sqjpjf4vqq1aep1V2QWTfa3C7OAyxRejm0J98N46hkRbf72SNDbwBxmbyZXK9aQdyHTRZAQJ-o5tPJeeJfjRxiytIaEHiJzFqWaS', msg)
 });
 
-
+/**
+ *
+ */
 app.get('/Users', (req, res) => {
     db.collection("Users").find().toArray((err, result) => {
         res.send(result);
     })
 });
+
+/**
+ *
+ */
 app.get('/Events', (req, res) => {
     db.collection("Events").find().toArray((err, result) => {
         res.send(result);
     })
 });
 
-
-// app.post('/Users', (req,res) =>{
-//     console.log("triggered");
-//     console.log(req.body);
-//     // var doc = Document.parse(req.data.toString());
-//     // res.send(doc);
-//     db.collection("Users").insert(req.body,function(err,result) {
-//         if (err)
-//             res.send(err);
-//         else
-//             res.send(result);})
-// });
-
+/**
+ *
+ */
 app.get('/Users/:id', (req, res) => {
     console.log("someone retrieved a user");
     var id = new ObjectID(req.params.id);//req.params.id
@@ -157,12 +179,9 @@ app.get('/Users/:id', (req, res) => {
     })
 });
 
-// app.get('/Location/:latitude&:longitude', (req, res) => {
-//     var latitude = req.params.latitude;
-//     var longitude = req.params.longitude;
-//     db.collection("Users").find({'_id':id}).toArray((err,result) => {
-//         res.send(result);})
-// });
+/**
+ *
+ */
 app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.json({
@@ -171,40 +190,22 @@ app.use((err, req, res, next) => {
         }
     });
 });
+
+/**
+ *
+ */
 app.post('/', function (req, res) {
     res.end();
 });
 
-// /*
-// Function: Posts Events into ./Event
-//  */
-// app.post('/Events', (req, res, next) => {
-//     db.collection('Events').save(req.body, (err, result) => {
-//         if (err) return console.log(err);
-//         console.log('Event Saved to Database');
-//     })
-//
-// });
-
-
 //TODO: implement updating function/call (to update songe parameter of document/json)
-/*
-Function: Posts Users into ./User
- */
-// app.post('/Users', (req, res) => {
-//     db.collection('Users').save(req.body, (err, result) => {
-//         if (err) return console.log(err);
-//         console.log('User Saved to Database');
-//     })
-// });
-
-var server = app.listen(port, function () {
-    //var host = server.address().address
-    var port = server.address().port;
-    console.log("Example app listening at %s!", port)
-});
 
 //firebase cloud messaging stuff
+/**
+ *
+ * @param registrationToken
+ * @param payload
+ */
 function sendmessage(registrationToken, payload) {
     var message = {notification: payload, token: registrationToken};
     admin.messaging().send(message)
@@ -217,4 +218,12 @@ function sendmessage(registrationToken, payload) {
         });
 }
 
-//app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+/**
+ * Initiate REST endpoints on specified port
+ * @param port integer which specifies which port the REST endpoints are accessible at
+ */
+var server = app.listen(port, function () {
+    //var host = server.address().address
+    var port = server.address().port;
+    console.log("App listening at %s!", port)
+});
