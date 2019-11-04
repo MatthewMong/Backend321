@@ -29,7 +29,9 @@ const ObjectID = require("mongodb").ObjectID;
  * Connect to MongoDB server
  */
 client.connect((err) => {
-  if (err) return console.log(err);
+  if (err) {
+    return console.log(err);
+  }
   db = client.db("Data");
   console.log("successful connect");
 });
@@ -63,6 +65,9 @@ function volleyMessages(UserID, payload) {
   UserID.forEach(function(value) {
     const id = new ObjectID(value);
     db.collection("Users").find({_id: id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
+      if (err) {
+        return console.log(err);
+      }
       sendMessage(result[0].FirebaseToken, payload);
     });
   });
@@ -103,7 +108,9 @@ app.use(get_user_location);
  */
 app.post("/Users", function(req, res) {
   db.collection("Users").insertOne(req.body, (err, result) => {
-    if (err) return console.log(err);
+    if (err) {
+      return console.log(err);
+    }
     res.send(result.insertedId);
   });
 });
@@ -118,7 +125,9 @@ app.put("/:collection/:id", function(req, res) {
   const id = new ObjectID(req.params.id);
   db.collection(req.params.collection).findOneAndUpdate({_id: id},
       {$set: req.body}, {new: true}, (err, result) => {
-        if (err) return console.log(err);
+        if (err) {
+          return console.log(err);
+        }
         res.send(result);
       });
 });
@@ -131,7 +140,9 @@ app.put("/:collection/:id", function(req, res) {
 app.delete("/:collection/:id", function(req, res) {
   const id = new ObjectID(req.params.id);
   db.collection(req.params.collection).deleteOne({_id: id}, (err, result) => {
-    if (err) return console.log(err);
+    if (err) {
+      return console.log(err);
+    }
     res.send(result);
   });
 });
@@ -155,7 +166,9 @@ const match_users2events = function(req, res, next) {
       longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
       latdec: {$gte: (latitDecLower), $lte: (latitDecUpper)},
     }).toArray((err, result) => {
-      if (err) return console.log(err);
+      if (err) {
+        return console.log(err);
+      }
       console.log(result);
       // TODO Do stuff with the array to find the best matches
     });
@@ -175,7 +188,9 @@ Parameters in req: name (name of event), Interests (for event), latdec (lat of e
  */
 app.post("/Events", [match_users2events], function(req, res, next) {
   db.collection("Events").insertOne(req.body, (err, result) => {
-    if (err) return console.log(err);
+    if (err) {
+      return console.log(err);
+    }
     const msg = {
       EventName: req.body.Name,
       Location: req.body.Location,
@@ -192,6 +207,9 @@ app.post("/Events", [match_users2events], function(req, res, next) {
  */
 app.get("/Users", (req, res) => {
   db.collection("Users").find().toArray((err, result) => {
+    if (err) {
+      return console.log(err);
+    }
     res.send(result);
   });
 });
@@ -202,6 +220,9 @@ app.get("/Users", (req, res) => {
  */
 app.get("/Events", (req, res) => {
   db.collection("Events").find().toArray((err, result) => {
+    if (err) {
+      return console.log(err);
+    }
     res.send(result);
   });
 });
