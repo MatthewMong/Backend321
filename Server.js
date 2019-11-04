@@ -202,11 +202,11 @@ app.post("/Events", [match_users2events], function(req, res, next) {
 });
 
 /**
- * GET endpoint for REST Api, url has the extension /Users
- * will return all users in collection as JSON object
+ * GET endpoint for REST Api, url has the extension /collection
+ * will return all objects in collection as JSON object
  */
-app.get("/Users", (req, res) => {
-  db.collection("Users").find().toArray((err, result) => {
+app.get("/:collection", (req, res) => {
+  db.collection(req.params.collection).find().toArray((err, result) => {
     if (err) {
       return console.log(err);
     }
@@ -214,18 +214,6 @@ app.get("/Users", (req, res) => {
   });
 });
 
-/**
- * GET endpoint for REST Api, url has the extension /Events
- * will return all events in collection as JSON object
- */
-app.get("/Events", (req, res) => {
-  db.collection("Events").find().toArray((err, result) => {
-    if (err) {
-      return console.log(err);
-    }
-    res.send(result);
-  });
-});
 
 /**
  * GET endpoint for REST Api, url has the extension /Users/id
