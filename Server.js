@@ -6,7 +6,7 @@ const coordVar = 2.00001;
  * @type {admin}
  */
 const admin = require("firebase-admin");
-const serviceAccount = require("../Backend321/thissucks-b5ac7-firebase-adminsdk-389of-ad03ab0675");
+const serviceAccount = require("/thissucks-b5ac7-firebase-adminsdk-389of-ad03ab0675");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://thissucks-b5ac7.firebaseio.com",
