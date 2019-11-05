@@ -205,13 +205,13 @@ function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
         return arrayUsers;
     } else {
         for (var i = 0; i < arrayAllUsers.length; i++) {
-            //var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
-            //var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-            if (isInRange(arrayAllUsers[parseInt(i, 10)].longdec, arrayAllUsers[parseInt(i, 10)].latdec, coordVar)) {
+            var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
+            var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
+            //if (isInRange(longDec, latDec, coordVar)) {
                 if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
                     arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
                 }
-            }
+            //}
         }
         coordVar = coordVar + coordIncrem;
         return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
