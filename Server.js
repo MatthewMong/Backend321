@@ -194,6 +194,20 @@ function matchUsers2Events(req, callback) {
 function isInRange(longDec, latDec, coordVar) {
     return ((longDec <= longDec + coordVar) && (longDec >= longDec - coordVar) && (latDec <= latDec + coordVar) && (latDec >= latDec - coordVar));
 }
+
+/**
+ *
+ * @param arrayAllUsers
+ * @param coordVar
+ * @param arrayUsers
+ */
+function sortMatchedUsersWrapper(arrayAllUsers, coordVar, arrayUsers) {
+    if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar) {
+        return arrayUsers;
+    } else {
+        return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
+    }
+}
 /**
  * Recursive function which finds closest matching users to event location
  * @param arrayAllUsers
@@ -201,22 +215,19 @@ function isInRange(longDec, latDec, coordVar) {
  * @param coordVar
  */
 function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
-   // if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar) {
-        return arrayUsers;
-   // } else {
-        for (var i = 0; i < arrayAllUsers.length; i++) {
-            var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
-            var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-            if (isInRange(longDec, latDec, coordVar)) {
-                if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
-                    arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
-                }
+    for (var i = 0; i < arrayAllUsers.length; i++) {
+        var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
+        var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
+        if (isInRange(longDec, latDec, coordVar)) {
+            if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
+                arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
             }
-        //}
-        coordVar = coordVar + coordIncrem;
-        return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
+        }
     }
+    coordVar = coordVar + coordIncrem;
+    return sortMatchedUsersWrapper(arrayAllUsers, coordVar, arrayUsers);
 }
+
 
 /*
 Creates events
