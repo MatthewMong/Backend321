@@ -189,34 +189,33 @@ function matchUsers2Events(req, callback) {
  * @param arrayAllUsers
  * @param arrayUsers
  * @param interests
- * @param latDec
- * @param longDec
  * @param coordVar
  * @param numUsers
  */
-function sortMatchedUsers(arrayAllUsers, interests, coordVar, numUsers, arrayUsers){
-  if (numUsers >= numOfUsers2Send){
-    return arrayUsers;
-  }
-  coordVar = coordVar + coordIncrem;
-  var closestNewUsers = [];
-  var iterations = arrayUsers.length;
-  for (var i = 0; i < arrayAllUsers.length; i++){
-      var longDec = arrayAllUsers[i].longdec;
-      var latDec = arrayAllUsers[i].latdec;
-    if (longDec <= longDec + coordVar && longDec >= longDec - coordVar ){
-      if (latDec <= latDec + coordVar && latDec >= latDec - coordVar){
-        if(iterations >= 1){
-          if(!arrayUsers[iterations-1].includes()){
-            closestNewUsers.push(arrayAllUsers[i]);
-          }
+function sortMatchedUsers(arrayAllUsers, interests, coordVar, numUsers, arrayUsers) {
+    coordVar = coordVar + coordIncrem;
+    var closestNewUsers = [];
+    var iterations = arrayUsers.length;
+    for (var i = 0; i < arrayAllUsers.length; i++) {
+        var longDec = arrayAllUsers[i].longdec;
+        var latDec = arrayAllUsers[i].latdec;
+        if (longDec <= longDec + coordVar && longDec >= longDec - coordVar) {
+            if (latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
+                if (iterations >= 1) {
+                    if (!arrayUsers[iterations - 1].includes()) {
+                        closestNewUsers.push(arrayAllUsers[i]);
+                    }
+                }
+            }
         }
-      }
     }
-  }
-  numUsers = numUsers + closestNewUsers.length;
-  arrayUsers.push(closestNewUsers);
-  return sortMatchedUsers(arrayAllUsers, interests, coordVar, numUsers, arrayUsers);
+    numUsers = numUsers + closestNewUsers.length;
+    arrayUsers.push(closestNewUsers);
+    if (numUsers >= numOfUsers2Send) {
+        return arrayUsers;
+    } else {
+        return sortMatchedUsers(arrayAllUsers, interests, coordVar, numUsers, arrayUsers);
+    }
 }
 
 /*
@@ -245,8 +244,7 @@ app.post("/Events", function(req, res, next) {
 
     matchUsers2Events(req, function(arrayAllUsers){
       var arraySortedUsers = [];
-      arraySortedUsers = sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, 0, 0, arraySortedUsers);
-      //console.log(arraySortedUsers);
+      arraySortedUsers = sortMatchedUsers(arrayAllUsers, interests, 0, 0, arraySortedUsers);
 
       var userIDSend = [];
       for (var i = 0; i < arraySortedUsers.length; i++){
