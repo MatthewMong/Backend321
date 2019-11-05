@@ -194,6 +194,15 @@ function matchUsers2Events(req, callback) {
 function isInRange(longDec, latDec, coordVar) {
     return ((longDec <= longDec + coordVar) && (longDec >= longDec - coordVar) && (latDec <= latDec + coordVar) && (latDec >= latDec - coordVar));
 }
+/**
+ *
+ * @param arrayAllUsers
+ * @param coordVar
+ * @param arrayUsers
+ */
+function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers) {
+    return arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar;
+}
 
 
 /**
@@ -203,30 +212,21 @@ function isInRange(longDec, latDec, coordVar) {
  * @param coordVar
  */
 function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
-    for (var i = 0; i < arrayAllUsers.length; i++) {
-        var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
-        var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-        if (isInRange(longDec, latDec, coordVar)) {
-            if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
-                arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
+    if (endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers)) {
+        return arrayUsers;
+    } else {
+        for (var i = 0; i < arrayAllUsers.length; i++) {
+            var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
+            var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
+            if (isInRange(longDec, latDec, coordVar)) {
+                if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
+                    arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
+                }
             }
         }
     }
     coordVar = coordVar + coordIncrem;
-    return sortMatchedUsersWrapper(arrayAllUsers, coordVar, arrayUsers);
-}
-/**
- *
- * @param arrayAllUsers
- * @param coordVar
- * @param arrayUsers
- */
-function sortMatchedUsersWrapper(arrayAllUsers, coordVar, arrayUsers) {
-    if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar) {
-        return arrayUsers;
-    } else {
-        return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
-    }
+    return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
 }
 
 /*
