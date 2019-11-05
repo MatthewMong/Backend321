@@ -211,7 +211,7 @@ function sortMatchedUsers(arrayAllUsers, interests, coordVar, numUsers, arrayUse
     }
     numUsers = numUsers + closestNewUsers.length;
     arrayUsers.push(closestNewUsers);
-    if (numUsers >= numOfUsers2Send || numUsers == arrayAllUsers.length) {
+    if (numUsers >= numOfUsers2Send || numUsers === arrayAllUsers.length) {
         return arrayUsers;
     } else {
         return sortMatchedUsers(arrayAllUsers, interests, coordVar, numUsers, arrayUsers);
