@@ -185,13 +185,23 @@ function matchUsers2Events(req, callback) {
 }
 
 /**
+ *
+ * @param longDec
+ * @param latDec
+ * @param coordVar
+ * @returns {boolean}
+ */
+function isInRange(longDec, latDec, coordVar) {
+    return ((longDec <= longDec + coordVar) && (longDec >= longDec - coordVar) && (latDec <= latDec + coordVar) && (latDec >= latDec - coordVar));
+}
+/**
  * Recursive function which finds closest matching users to event location
  * @param arrayAllUsers
  * @param arrayUsers
  * @param coordVar
  */
 function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
-    if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || arrayAllUsers.length === 0) {
+    if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length) {
         return arrayUsers;
     } else if (coordVar >= maxCoordVar) {
         return arrayUsers;
@@ -199,16 +209,11 @@ function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
         for (var i = 0; i < arrayAllUsers.length; i++) {
             var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
             var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-            if (longDec <= longDec + coordVar && longDec >= longDec - coordVar && latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
+            if (isInRange(longDec, latDec, coordVar)) {
                 if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
                     arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
-                } else {
-                    continue;
                 }
-            } else {
-                continue;
             }
-
         }
         coordVar = coordVar + coordIncrem;
         return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
