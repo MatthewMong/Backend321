@@ -201,7 +201,11 @@ function isInRange(longDec, latDec, coordVar) {
  * @param arrayUsers
  */
 function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers) {
-    return arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar;
+    if(arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar){
+        return true
+    } else {
+        return false;
+    }
 }
 
 
