@@ -201,18 +201,18 @@ function isInRange(longDec, latDec, coordVar) {
  * @param coordVar
  */
 function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
-    if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar) {
+   // if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar) {
         return arrayUsers;
-    } else {
+   // } else {
         for (var i = 0; i < arrayAllUsers.length; i++) {
             var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
             var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-            //if (isInRange(longDec, latDec, coordVar)) {
+            if (isInRange(longDec, latDec, coordVar)) {
                 if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
                     arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
                 }
-            //}
-        }
+            }
+        //}
         coordVar = coordVar + coordIncrem;
         return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
     }
