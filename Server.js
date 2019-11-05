@@ -201,13 +201,8 @@ function isInRange(longDec, latDec, coordVar) {
  * @param arrayUsers
  */
 function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers) {
-    if(arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar){
-        return true
-    } else {
-        return false;
-    }
+    return arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar;
 }
-
 
 /**
  * Recursive function which finds closest matching users to event location
