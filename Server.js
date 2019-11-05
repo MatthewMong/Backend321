@@ -1,5 +1,7 @@
 const port = 3000;
-const coordVar = 2.00001;
+const coordIncrem = 1.01;
+const maxCoordVar = 3.00001;
+const numOfUsers2Send = 1;
 
 /**
  *Initiate Firebase Cloud Messaging connection
@@ -24,6 +26,7 @@ const app = express();
 app.use(express.json());
 let db;
 const ObjectID = require("mongodb").ObjectID;
+// const matching = require('./Matching');
 
 /**
  * Connect to MongoDB server
@@ -78,14 +81,15 @@ function volleyMessages(UserID, payload) {
  * @param req
  * @param res
  * @param next
+ * TODO: Change req.body.variable_name to req.body.variableName when variableName known
  */
-const get_user_location = function(req, res, next) {
+const getUserLocation = function(req, res, next) {
   const longitdec = req.body.user_longdec;
   const latitdec = req.body.user_latdec;
-  const user_id = req.body.user_id;
+  const userId = req.body.user_id;
   try {
     db.collection("Users").updateOne(
-        {_id: {user_id}},
+        {_id: {userId}},
         {
           $set:
                     {
@@ -99,7 +103,7 @@ const get_user_location = function(req, res, next) {
   }
   next();
 };
-app.use(get_user_location);
+app.use(getUserLocation);
 
 /**
  * Add user to MongoDB, request body should be a JSON object of the format
@@ -150,31 +154,66 @@ app.delete("/:collection/:id", function(req, res) {
 /**
  *
  * @param req
- * @param res
- * @param next
+ * @param callback
  */
-const match_users2events = function(req, res, next) {
+function matchUsers2Events(req, callback) {
   const interests = req.body.Interests;
-  const latitDecUpper = req.body.latdec + coordVar;
-  const latitDecLower = req.body.latdec - coordVar;
-  const longitDecUpper = req.body.longdec + coordVar;
-  const longitDecLower = req.body.longdec - coordVar;
-  if (interests.length >= 1 || true) {
+  const latitDecUpper = req.body.latdec + maxCoordVar;
+  const latitDecLower = req.body.latdec - maxCoordVar;
+  const longitDecUpper = req.body.longdec + maxCoordVar;
+  const longitDecLower = req.body.longdec - maxCoordVar;
+  if (interests.length >= 1) {
     db.collection("Users").find({
       Interests: {$in: interests},
       Active: true,
       longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
       latdec: {$gte: (latitDecLower), $lte: (latitDecUpper)},
-    }).toArray((err, result) => {
+    }, {projection: {
+        Interests: true,
+        longdec: true,
+        latdec: true
+      }}).toArray((err, result) => {
       if (err) {
         return console.log(err);
+      } else {
+        callback(result);
       }
-      console.log(result);
-      // TODO Do stuff with the array to find the best matches
     });
   }
-  next();
-};
+}
+
+/**
+ * Recursive function which finds closest matching users to event location
+ * @param arrayAllUsers
+ * @param arrayUsers
+ * @param interests
+ * @param latDec
+ * @param longDec
+ * @param coordVar
+ * @param numUsers
+ */
+function sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, coordVar, numUsers, arrayUsers){
+  if (numUsers >= numOfUsers2Send){
+    return arrayUsers;
+  }
+  coordVar = coordVar + coordIncrem;
+  var closestNewUsers = [];
+  var iterations = arrayUsers.length;
+  for (var i = 0; i < arrayAllUsers.length; i++){
+    if (arrayAllUsers[i].longdec <= longDec + coordVar && arrayAllUsers[i].longdec >= longDec - coordVar ){
+      if (arrayAllUsers[i].latdec <= latDec + coordVar && arrayAllUsers[i].latdec >= latDec - coordVar){
+        if(iterations >= 1){
+          if(!arrayUsers[iterations-1].includes()){
+            closestNewUsers.push(arrayAllUsers[i]);
+          }
+        }
+      }
+    }
+  }
+  numUsers = numUsers + closestNewUsers.length;
+  arrayUsers.push(closestNewUsers);
+  return sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, coordVar, numUsers, arrayUsers);
+}
 
 /*
 Creates events
@@ -186,17 +225,31 @@ Parameters in req: name (name of event), Interests (for event), latdec (lat of e
  * attach updated json file in the data package.
  * Will automatically match users and trigger notifications
  */
-app.post("/Events", [match_users2events], function(req, res, next) {
+app.post("/Events", function(req, res, next) {
   db.collection("Events").insertOne(req.body, (err, result) => {
     if (err) {
       return console.log(err);
     }
+    var latDec = req.body.latdec;
+    var longDec = req.body.longdec;
+    var interests = req.body.Interests;
+
     const msg = {
       EventName: req.body.Name,
       Location: req.body.Location,
     };
-    volleyMessages(["5da616b81c9d4400008b451f", "5da616b81c9d4400008b451f"], msg);
-    // var inserted_id= result.insertedId;
+
+    matchUsers2Events(req, function(arrayAllUsers){
+      var arraySortedUsers = [];
+      arraySortedUsers = sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, 0, 0, arraySortedUsers);
+      console.log(arraySortedUsers);
+
+      for (var i = 0; i < arraySortedUsers.length; i++){
+        for (var index = 0; index < arraySortedUsers[i].length; index++) {
+          volleyMessages(arraySortedUsers[i][index]._id, msg);
+        }
+      }
+    });
     res.send(result.insertedId);
   });
 });
@@ -260,7 +313,6 @@ app.post("/", function(req, res) {
   res.end();
 });
 
-// TODO: implement updating function/call (to update songe parameter of document/json)
 
 /**
  * Initiate REST endpoints on specified port
