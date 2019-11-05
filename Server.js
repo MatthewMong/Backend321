@@ -188,30 +188,26 @@ function matchUsers2Events(req, callback) {
  * Recursive function which finds closest matching users to event location
  * @param arrayAllUsers
  * @param arrayUsers
- * @param interests
  * @param coordVar
- * @param numUsers
  */
-function sortMatchedUsers(arrayAllUsers, interests, coordVar, numUsers, arrayUsers) {
-    coordVar = coordVar + coordIncrem;
-    var closestNewUsers = [];
-    for (var i = 0; i < arrayAllUsers.length; i++) {
-        var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
-        var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-        if (longDec <= longDec + coordVar && longDec >= longDec - coordVar) {
-            if (latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
+function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
+    if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length === arrayAllUsers.length || arrayAllUsers.length === 0) {
+        return arrayUsers;
+    } else if (coordVar >= maxCoordVar){
+        return arrayUsers;
+    } else {
+        for (var i = 0; i < arrayAllUsers.length; i++) {
+            var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
+            var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
+            if (longDec <= longDec + coordVar && longDec >= longDec - coordVar && latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
+                // if (latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
                 if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
-                    closestNewUsers.push(arrayAllUsers[parseInt(i, 10)]);
+                    arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
                 }
             }
         }
-    }
-    numUsers = numUsers + closestNewUsers.length;
-    arrayUsers = arrayUsers.concat(closestNewUsers);
-    if (numUsers >= numOfUsers2Send || numUsers === arrayAllUsers.length) {
-        return arrayUsers;
-    } else {
-        return sortMatchedUsers(arrayAllUsers, interests, coordVar, numUsers, arrayUsers);
+        coordVar = coordVar + coordIncrem;
+        return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
     }
 }
 
@@ -241,7 +237,7 @@ app.post("/Events", function(req, res, next) {
 
     matchUsers2Events(req, function(arrayAllUsers){
       var arraySortedUsers = [];
-      arraySortedUsers = sortMatchedUsers(arrayAllUsers, interests, 0, 0, arraySortedUsers);
+      arraySortedUsers = sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
 
       console.log(arraySortedUsers);
       var userIDSend = [];
