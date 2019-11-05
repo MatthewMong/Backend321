@@ -195,22 +195,19 @@ function matchUsers2Events(req, callback) {
 function sortMatchedUsers(arrayAllUsers, interests, coordVar, numUsers, arrayUsers) {
     coordVar = coordVar + coordIncrem;
     var closestNewUsers = [];
-    var iterations = arrayUsers.length;
     for (var i = 0; i < arrayAllUsers.length; i++) {
         var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
         var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
         if (longDec <= longDec + coordVar && longDec >= longDec - coordVar) {
             if (latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
-                if (iterations >= 1) {
-                    if (!arrayUsers[iterations - 1].includes()) {
-                        closestNewUsers.push(arrayAllUsers[parseInt(i, 10)]);
-                    }
+                if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
+                    closestNewUsers.push(arrayAllUsers[parseInt(i, 10)]);
                 }
             }
         }
     }
     numUsers = numUsers + closestNewUsers.length;
-    arrayUsers.push(closestNewUsers);
+    arrayUsers = arrayUsers.concat(closestNewUsers);
     if (numUsers >= numOfUsers2Send || numUsers === arrayAllUsers.length) {
         return arrayUsers;
     } else {
@@ -246,12 +243,15 @@ app.post("/Events", function(req, res, next) {
       var arraySortedUsers = [];
       arraySortedUsers = sortMatchedUsers(arrayAllUsers, interests, 0, 0, arraySortedUsers);
 
+      console.log(arraySortedUsers);
       var userIDSend = [];
       for (var i = 0; i < arraySortedUsers.length; i++){
-        for (var index = 0; index < arraySortedUsers[parseInt(i, 10)].length; index++) {
-            userIDSend.push(arraySortedUsers[parseInt(i, 10)][parseInt(index, 10)]._id.toString());
-        }
+        // for (var index = 0; index < arraySortedUsers[parseInt(i, 10)].length; index++) {
+            //userIDSend.push(arraySortedUsers[parseInt(i, 10)][parseInt(index, 10)]._id.toString());
+          userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
+        // }
       }
+        console.log(userIDSend);
       volleyMessages(userIDSend, msg);
     });
         res.send(result.insertedId);
