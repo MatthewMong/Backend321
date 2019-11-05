@@ -63,6 +63,11 @@ function sendMessage(registrationToken, payload) {
  * @param UserID is an array, containing MongoDB ids as strings
  * @param payload JSON object to be delivered
  */
+/**
+ * Send message to multiple users using FCM
+ * @param UserID is an array, containing MongoDB ids as strings
+ * @param payload JSON object to be delivered
+ */
 function volleyMessages(UserID, payload) {
     UserID.forEach(function (value) {
         const id = new ObjectID(value);
@@ -248,7 +253,7 @@ app.post("/Events", function(req, res, next) {
 
       for (var i = 0; i < arraySortedUsers.length; i++){
         for (var index = 0; index < arraySortedUsers[i].length; index++) {
-          volleyMessages(arraySortedUsers[i][index]._id, msg);
+            volleyMessages(arraySortedUsers[i][index]._id.toString(), msg);
         }
       }
     });
