@@ -194,7 +194,7 @@ function matchUsers2Events(req, callback) {
  * @param coordVar
  * @param numUsers
  */
-function sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, coordVar, numUsers, arrayUsers){
+function sortMatchedUsers(arrayAllUsers, interests, coordVar, numUsers, arrayUsers){
   if (numUsers >= numOfUsers2Send){
     return arrayUsers;
   }
@@ -216,7 +216,7 @@ function sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, coordVar, n
   }
   numUsers = numUsers + closestNewUsers.length;
   arrayUsers.push(closestNewUsers);
-  return sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, coordVar, numUsers, arrayUsers);
+  return sortMatchedUsers(arrayAllUsers, interests, coordVar, numUsers, arrayUsers);
 }
 
 /*
@@ -254,7 +254,6 @@ app.post("/Events", function(req, res, next) {
             userIDSend.push(arraySortedUsers[i][index]._id.toString());
         }
       }
-      //console.log(userIDSend);
       volleyMessages(userIDSend, msg);
     });
         res.send(result.insertedId);
@@ -285,7 +284,7 @@ app.get("/:collection/:id", (req, res) => {
     const id = new ObjectID(req.params.id);// req.params.id
     db.collection(req.params.collection).find({_id: id}).toArray((err, result) => {
         if (err) {
-            res.send(err)
+            res.send(err);
         } else {
             res.send(result);
         }
