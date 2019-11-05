@@ -195,19 +195,7 @@ function isInRange(longDec, latDec, coordVar) {
     return ((longDec <= longDec + coordVar) && (longDec >= longDec - coordVar) && (latDec <= latDec + coordVar) && (latDec >= latDec - coordVar));
 }
 
-/**
- *
- * @param arrayAllUsers
- * @param coordVar
- * @param arrayUsers
- */
-function sortMatchedUsersWrapper(arrayAllUsers, coordVar, arrayUsers) {
-    if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar) {
-        return arrayUsers;
-    } else {
-        return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
-    }
-}
+
 /**
  * Recursive function which finds closest matching users to event location
  * @param arrayAllUsers
@@ -227,7 +215,19 @@ function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
     coordVar = coordVar + coordIncrem;
     return sortMatchedUsersWrapper(arrayAllUsers, coordVar, arrayUsers);
 }
-
+/**
+ *
+ * @param arrayAllUsers
+ * @param coordVar
+ * @param arrayUsers
+ */
+function sortMatchedUsersWrapper(arrayAllUsers, coordVar, arrayUsers) {
+    if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar) {
+        return arrayUsers;
+    } else {
+        return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
+    }
+}
 
 /*
 Creates events
