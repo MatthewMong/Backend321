@@ -199,10 +199,11 @@ function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
         for (var i = 0; i < arrayAllUsers.length; i++) {
             var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
             var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-            if (longDec <= longDec + coordVar && longDec >= longDec - coordVar && latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
-                // if (latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
-                if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
-                    arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
+            if (longDec <= longDec + coordVar && longDec >= longDec - coordVar) {
+                if (latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
+                    if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
+                        arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
+                    }
                 }
             }
         }
