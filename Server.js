@@ -51,10 +51,8 @@ function sendMessage(registrationToken, payload) {
     admin.messaging().send(message)
         .then((response) => {
             // Response is a message ID string.
-            //console.log("Successfully sent message:", response);
         })
         .catch((error) => {
-            //console.log("Error sending message:", error);
         });
 }
 
@@ -72,9 +70,6 @@ function volleyMessages(UserID, payload) {
     UserID.forEach(function (value) {
         const id = new ObjectID(value);
         db.collection("Users").find({_id: id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
-            if (err) {
-                //return console.log(err);
-            }
             sendMessage(result[0].FirebaseToken, payload);
         });
     });
@@ -282,15 +277,18 @@ app.get("/:collection", (req, res) => {
 
 
 /**
- * GET endpoint for REST Api, url has the extension /Users/id
+ * GET endpoint for REST Api, url has the extension /collection/id
  * where id is the MongoDB id of user
- * will return all user as a JSON object
+ * will return document as a JSON object
  */
-app.get("/Users/:id", (req, res) => {
-    //console.log("someone retrieved a user");
+app.get("/:collection/:id", (req, res) => {
     const id = new ObjectID(req.params.id);// req.params.id
-    db.collection("Users").find({_id: id}).toArray((err, result) => {
-        res.send(result);
+    db.collection(req.params.collection).find({_id: id}).toArray((err, result) => {
+        if (err) {
+            res.send(err)
+        } else {
+            res.send(result);
+        }
     });
 });
 
@@ -321,8 +319,7 @@ app.post("/", function(req, res) {
  * @param port integer which specifies which port
  * the REST endpoints are accessible at
  */
-const server = app.listen(port, function() {
-  // var host = server.address().address
-  const port = server.address().port;
-  //console.log("App listening at %s!", port);
+const server = app.listen(port, function () {
+    // var host = server.address().address
+    const port = server.address().port;
 });
