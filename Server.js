@@ -10,8 +10,8 @@ const numOfUsers2Send = 1;
 const admin = require("firebase-admin");
 const serviceAccount = require("../Backend321/thissucks-b5ac7-firebase-adminsdk-389of-ad03ab0675");
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://thissucks-b5ac7.firebaseio.com",
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://thissucks-b5ac7.firebaseio.com",
 });
 
 /**
@@ -26,17 +26,16 @@ const app = express();
 app.use(express.json());
 let db;
 const ObjectID = require("mongodb").ObjectID;
-// const matching = require('./Matching');
 
 /**
  * Connect to MongoDB server
  */
 client.connect((err) => {
-  if (err) {
-    return console.log(err);
-  }
-  db = client.db("Data");
-  console.log("successful connect");
+    if (err) {
+        return console.log(err);
+    }
+    db = client.db("Data");
+    console.log("successful connect");
 });
 
 // firebase cloud messaging stuff
@@ -48,15 +47,15 @@ client.connect((err) => {
  * @param payload JSON object to be delivered
  */
 function sendMessage(registrationToken, payload) {
-  const message = {data: payload, token: registrationToken};
-  admin.messaging().send(message)
-      .then((response) => {
-      // Response is a message ID string.
-        console.log("Successfully sent message:", response);
-      })
-      .catch((error) => {
-        console.log("Error sending message:", error);
-      });
+    const message = {data: payload, token: registrationToken};
+    admin.messaging().send(message)
+        .then((response) => {
+            // Response is a message ID string.
+            console.log("Successfully sent message:", response);
+        })
+        .catch((error) => {
+            console.log("Error sending message:", error);
+        });
 }
 
 /**
@@ -65,15 +64,15 @@ function sendMessage(registrationToken, payload) {
  * @param payload JSON object to be delivered
  */
 function volleyMessages(UserID, payload) {
-  UserID.forEach(function(value) {
-    const id = new ObjectID(value);
-    db.collection("Users").find({_id: id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
-      if (err) {
-        return console.log(err);
-      }
-      sendMessage(result[0].FirebaseToken, payload);
+    UserID.forEach(function (value) {
+        const id = new ObjectID(value);
+        db.collection("Users").find({_id: id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
+            if (err) {
+                return console.log(err);
+            }
+            sendMessage(result[0].FirebaseToken, payload);
+        });
     });
-  });
 }
 
 /**
@@ -83,25 +82,25 @@ function volleyMessages(UserID, payload) {
  * @param next
  * TODO: Change req.body.variable_name to req.body.variableName when variableName known
  */
-const getUserLocation = function(req, res, next) {
-  const longitdec = req.body.user_longdec;
-  const latitdec = req.body.user_latdec;
-  const userId = req.body.user_id;
-  try {
-    db.collection("Users").updateOne(
-        {_id: {userId}},
-        {
-          $set:
+const getUserLocation = function (req, res, next) {
+    const longitdec = req.body.user_longdec;
+    const latitdec = req.body.user_latdec;
+    const userId = req.body.user_id;
+    try {
+        db.collection("Users").updateOne(
+            {_id: {userId}},
+            {
+                $set:
                     {
-                      longdec: longitdec,
-                      latdec: latitdec,
+                        longdec: longitdec,
+                        latdec: latitdec,
                     },
-        },
-    );
-  } catch (e) {
-    console.log(e);
-  }
-  next();
+            },
+        );
+    } catch (e) {
+        console.log(e);
+    }
+    next();
 };
 app.use(getUserLocation);
 
@@ -110,13 +109,14 @@ app.use(getUserLocation);
  * {Name:String, Age:Integer, Location:}
  * Response is MongoDB ObjectID for the newly created document
  */
-app.post("/Users", function(req, res) {
-  db.collection("Users").insertOne(req.body, (err, result) => {
-    if (err) {
-      return console.log(err);
-    }
-    res.send(result.insertedId);
-  });
+app.post("/Users", function (req, res) {
+    db.collection("Users").insertOne(req.body, (err, result) => {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send(result.insertedId);
+        }
+    });
 });
 
 /**
@@ -125,15 +125,16 @@ app.post("/Users", function(req, res) {
  * attach updated json file in the data package.
  * Returns updated categories and status.
  */
-app.put("/:collection/:id", function(req, res) {
-  const id = new ObjectID(req.params.id);
-  db.collection(req.params.collection).findOneAndUpdate({_id: id},
-      {$set: req.body}, {new: true}, (err, result) => {
-        if (err) {
-          return console.log(err);
-        }
-        res.send(result);
-      });
+app.put("/:collection/:id", function (req, res) {
+    const id = new ObjectID(req.params.id);
+    db.collection(req.params.collection).findOneAndUpdate({_id: id},
+        {$set: req.body}, {new: true}, (err, result) => {
+            if (err) {
+                res.send(err);
+            } else {
+                res.send(result);
+            }
+        });
 });
 
 /**
@@ -141,14 +142,15 @@ app.put("/:collection/:id", function(req, res) {
  * /collection/id to specify the collection and object_id that needs removed
  * returns confirmation or error
  */
-app.delete("/:collection/:id", function(req, res) {
-  const id = new ObjectID(req.params.id);
-  db.collection(req.params.collection).deleteOne({_id: id}, (err, result) => {
-    if (err) {
-      return console.log(err);
-    }
-    res.send(result);
-  });
+app.delete("/:collection/:id", function (req, res) {
+    const id = new ObjectID(req.params.id);
+    db.collection(req.params.collection).deleteOne({_id: id}, (err, result) => {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send(result);
+        }
+    });
 });
 
 /**
@@ -250,35 +252,24 @@ app.post("/Events", function(req, res, next) {
         }
       }
     });
-    res.send(result.insertedId);
-  });
+        res.send(result.insertedId);
+    });
 });
 
 /**
- * GET endpoint for REST Api, url has the extension /Users
- * will return all users in collection as JSON object
+ * GET endpoint for REST Api, url has the extension /collection
+ * will return all objects in collection as JSON object
  */
-app.get("/Users", (req, res) => {
-  db.collection("Users").find().toArray((err, result) => {
-    if (err) {
-      return console.log(err);
-    }
-    res.send(result);
-  });
+app.get("/:collection", (req, res) => {
+    db.collection(req.params.collection).find().toArray((err, result) => {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send(result);
+        }
+    });
 });
 
-/**
- * GET endpoint for REST Api, url has the extension /Events
- * will return all events in collection as JSON object
- */
-app.get("/Events", (req, res) => {
-  db.collection("Events").find().toArray((err, result) => {
-    if (err) {
-      return console.log(err);
-    }
-    res.send(result);
-  });
-});
 
 /**
  * GET endpoint for REST Api, url has the extension /Users/id
@@ -286,11 +277,11 @@ app.get("/Events", (req, res) => {
  * will return all user as a JSON object
  */
 app.get("/Users/:id", (req, res) => {
-  console.log("someone retrieved a user");
-  const id = new ObjectID(req.params.id);// req.params.id
-  db.collection("Users").find({_id: id}).toArray((err, result) => {
-    res.send(result);
-  });
+    console.log("someone retrieved a user");
+    const id = new ObjectID(req.params.id);// req.params.id
+    db.collection("Users").find({_id: id}).toArray((err, result) => {
+        res.send(result);
+    });
 });
 
 /**
@@ -313,6 +304,7 @@ app.post("/", function(req, res) {
   res.end();
 });
 
+// TODO: implement updating function/call (to update songe parameter of document/json)
 
 /**
  * Initiate REST endpoints on specified port
