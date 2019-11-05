@@ -202,7 +202,11 @@ function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
             if (longDec <= longDec + coordVar && longDec >= longDec - coordVar && latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
                 if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
                     arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
+                } else {
+                    continue;
                 }
+            } else {
+                continue;
             }
 
         }
@@ -238,8 +242,6 @@ app.post("/Events", function(req, res, next) {
     matchUsers2Events(req, function(arrayAllUsers){
       var arraySortedUsers = [];
       arraySortedUsers = sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
-
-      console.log(arraySortedUsers);
       var userIDSend = [];
       for (var i = 0; i < arraySortedUsers.length; i++){
         // for (var index = 0; index < arraySortedUsers[parseInt(i, 10)].length; index++) {
@@ -247,7 +249,6 @@ app.post("/Events", function(req, res, next) {
           userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
         // }
       }
-        console.log(userIDSend);
       volleyMessages(userIDSend, msg);
     });
         res.send(result.insertedId);
