@@ -32,10 +32,10 @@ const ObjectID = require("mongodb").ObjectID;
  */
 client.connect((err) => {
     if (err) {
-        return console.log(err);
+        //return console.log(err);
     }
     db = client.db("Data");
-    console.log("successful connect");
+    //console.log("successful connect");
 });
 
 // firebase cloud messaging stuff
@@ -51,10 +51,10 @@ function sendMessage(registrationToken, payload) {
     admin.messaging().send(message)
         .then((response) => {
             // Response is a message ID string.
-            console.log("Successfully sent message:", response);
+            //console.log("Successfully sent message:", response);
         })
         .catch((error) => {
-            console.log("Error sending message:", error);
+            //console.log("Error sending message:", error);
         });
 }
 
@@ -73,7 +73,7 @@ function volleyMessages(UserID, payload) {
         const id = new ObjectID(value);
         db.collection("Users").find({_id: id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
             if (err) {
-                return console.log(err);
+                //return console.log(err);
             }
             sendMessage(result[0].FirebaseToken, payload);
         });
@@ -103,7 +103,7 @@ const getUserLocation = function (req, res, next) {
             },
         );
     } catch (e) {
-        console.log(e);
+        //console.log(e);
     }
     next();
 };
@@ -181,7 +181,7 @@ function matchUsers2Events(req, callback) {
         latdec: true
       }}).toArray((err, result) => {
       if (err) {
-        return console.log(err);
+        //return console.log(err);
       } else {
         callback(result);
       }
@@ -207,8 +207,10 @@ function sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, coordVar, n
   var closestNewUsers = [];
   var iterations = arrayUsers.length;
   for (var i = 0; i < arrayAllUsers.length; i++){
-    if (arrayAllUsers[i].longdec <= longDec + coordVar && arrayAllUsers[i].longdec >= longDec - coordVar ){
-      if (arrayAllUsers[i].latdec <= latDec + coordVar && arrayAllUsers[i].latdec >= latDec - coordVar){
+      var longDec = arrayAllUsers[i].longdec;
+      var latDec = arrayAllUsers[i].latdec;
+    if (longDec <= longDec + coordVar && longDec >= longDec - coordVar ){
+      if (latDec <= latDec + coordVar && latDec >= latDec - coordVar){
         if(iterations >= 1){
           if(!arrayUsers[iterations-1].includes()){
             closestNewUsers.push(arrayAllUsers[i]);
@@ -235,7 +237,7 @@ Parameters in req: name (name of event), Interests (for event), latdec (lat of e
 app.post("/Events", function(req, res, next) {
   db.collection("Events").insertOne(req.body, (err, result) => {
     if (err) {
-      return console.log(err);
+      //return console.log(err);
     }
     var latDec = req.body.latdec;
     var longDec = req.body.longdec;
@@ -249,13 +251,16 @@ app.post("/Events", function(req, res, next) {
     matchUsers2Events(req, function(arrayAllUsers){
       var arraySortedUsers = [];
       arraySortedUsers = sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, 0, 0, arraySortedUsers);
-      console.log(arraySortedUsers);
+      //console.log(arraySortedUsers);
 
+      var userIDSend = [];
       for (var i = 0; i < arraySortedUsers.length; i++){
         for (var index = 0; index < arraySortedUsers[i].length; index++) {
-            volleyMessages(arraySortedUsers[i][index]._id.toString(), msg);
+            userIDSend.push(arraySortedUsers[i][index]._id.toString());
         }
       }
+      //console.log(userIDSend);
+      volleyMessages(userIDSend, msg);
     });
         res.send(result.insertedId);
     });
@@ -282,7 +287,7 @@ app.get("/:collection", (req, res) => {
  * will return all user as a JSON object
  */
 app.get("/Users/:id", (req, res) => {
-    console.log("someone retrieved a user");
+    //console.log("someone retrieved a user");
     const id = new ObjectID(req.params.id);// req.params.id
     db.collection("Users").find({_id: id}).toArray((err, result) => {
         res.send(result);
@@ -319,5 +324,5 @@ app.post("/", function(req, res) {
 const server = app.listen(port, function() {
   // var host = server.address().address
   const port = server.address().port;
-  console.log("App listening at %s!", port);
+  //console.log("App listening at %s!", port);
 });
