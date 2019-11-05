@@ -191,21 +191,20 @@ function matchUsers2Events(req, callback) {
  * @param coordVar
  */
 function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
-    if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length === arrayAllUsers.length || arrayAllUsers.length === 0) {
+    if (arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || arrayAllUsers.length === 0) {
         return arrayUsers;
-    } else if (coordVar >= maxCoordVar){
+    } else if (coordVar >= maxCoordVar) {
         return arrayUsers;
     } else {
         for (var i = 0; i < arrayAllUsers.length; i++) {
             var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
             var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-            if (longDec <= longDec + coordVar && longDec >= longDec - coordVar) {
-                if (latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
-                    if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
-                        arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
-                    }
+            if (longDec <= longDec + coordVar && longDec >= longDec - coordVar && latDec <= latDec + coordVar && latDec >= latDec - coordVar) {
+                if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
+                    arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
                 }
             }
+
         }
         coordVar = coordVar + coordIncrem;
         return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
