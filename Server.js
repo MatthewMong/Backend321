@@ -279,7 +279,7 @@ app.get("/:collection/:id", (req, res) => {
     const id = new ObjectID(req.params.id);// req.params.id
     db.collection(req.params.collection).find({_id: id}).toArray((err, result) => {
         if (err) {
-            res.send(err)
+            res.send(err);
         } else {
             res.send(result);
         }
