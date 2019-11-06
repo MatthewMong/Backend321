@@ -32,9 +32,10 @@ const ObjectID = require("mongodb").ObjectID;
  */
 client.connect((err) => {
     if (err) {
-        return err;
+        //return console.log(err);
     }
     db = client.db("Data");
+    //console.log("successful connect");
 });
 
 // firebase cloud messaging stuff
@@ -97,7 +98,7 @@ const getUserLocation = function (req, res, next) {
             },
         );
     } catch (e) {
-        console.log(e);
+        //console.log(e);
     }
     next();
 };
@@ -175,7 +176,7 @@ function matchUsers2Events(req, callback) {
         latdec: true
       }}).toArray((err, result) => {
       if (err) {
-        return console.log(err);
+        //return console.log(err);
       } else {
         callback(result);
       }
@@ -184,36 +185,47 @@ function matchUsers2Events(req, callback) {
 }
 
 /**
+ *
+ * @param longDec
+ * @param latDec
+ * @param coordVar
+ * @returns {boolean}
+ */
+function isInRange(longDec, latDec, coordVar) {
+    return ((longDec <= longDec + coordVar) && (longDec >= longDec - coordVar) && (latDec <= latDec + coordVar) && (latDec >= latDec - coordVar));
+}
+/**
+ *
+ * @param arrayAllUsers
+ * @param coordVar
+ * @param arrayUsers
+ */
+function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers) {
+    return arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar;
+}
+
+/**
  * Recursive function which finds closest matching users to event location
  * @param arrayAllUsers
  * @param arrayUsers
- * @param interests
- * @param latDec
- * @param longDec
  * @param coordVar
- * @param numUsers
  */
-function sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, coordVar, numUsers, arrayUsers){
-  if (numUsers >= numOfUsers2Send){
-    return arrayUsers;
-  }
-  coordVar = coordVar + coordIncrem;
-  var closestNewUsers = [];
-  var iterations = arrayUsers.length;
-  for (var i = 0; i < arrayAllUsers.length; i++){
-    if (arrayAllUsers[i].longdec <= longDec + coordVar && arrayAllUsers[i].longdec >= longDec - coordVar ){
-      if (arrayAllUsers[i].latdec <= latDec + coordVar && arrayAllUsers[i].latdec >= latDec - coordVar){
-        if(iterations >= 1){
-          if(!arrayUsers[iterations-1].includes()){
-            closestNewUsers.push(arrayAllUsers[i]);
-          }
+function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
+    if (endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers)) {
+        return arrayUsers;
+    } else {
+        for (var i = 0; i < arrayAllUsers.length; i++) {
+            var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
+            var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
+            if (isInRange(longDec, latDec, coordVar)) {
+                if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
+                    arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
+                }
+            }
         }
-      }
     }
-  }
-  numUsers = numUsers + closestNewUsers.length;
-  arrayUsers.push(closestNewUsers);
-  return sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, coordVar, numUsers, arrayUsers);
+    coordVar = coordVar + coordIncrem;
+    return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
 }
 
 /*
@@ -229,7 +241,7 @@ Parameters in req: name (name of event), Interests (for event), latdec (lat of e
 app.post("/Events", function(req, res, next) {
   db.collection("Events").insertOne(req.body, (err, result) => {
     if (err) {
-      return console.log(err);
+      //return console.log(err);
     }
     var latDec = req.body.latdec;
     var longDec = req.body.longdec;
@@ -242,14 +254,15 @@ app.post("/Events", function(req, res, next) {
 
     matchUsers2Events(req, function(arrayAllUsers){
       var arraySortedUsers = [];
-      arraySortedUsers = sortMatchedUsers(arrayAllUsers, interests, latDec, longDec, 0, 0, arraySortedUsers);
-      console.log(arraySortedUsers);
-
+      arraySortedUsers = sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+      var userIDSend = [];
       for (var i = 0; i < arraySortedUsers.length; i++){
-        for (var index = 0; index < arraySortedUsers[i].length; index++) {
-            volleyMessages(arraySortedUsers[i][index]._id.toString(), msg);
-        }
+        // for (var index = 0; index < arraySortedUsers[parseInt(i, 10)].length; index++) {
+            //userIDSend.push(arraySortedUsers[parseInt(i, 10)][parseInt(index, 10)]._id.toString());
+          userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
+        // }
       }
+      volleyMessages(userIDSend, msg);
     });
         res.send(result.insertedId);
     });
