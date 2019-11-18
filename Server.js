@@ -330,9 +330,9 @@ app.post("/", function (req, res) {
  * @param port integer which specifies which port
  * the REST endpoints are accessible at
  */
-// const server = app.listen(port, function () {
-//     // var host = server.address().address
-//     const port = server.address().port;
-// });
+const server = app.listen(port, function () {
+    // var host = server.address().address
+    const port = server.address().port;
+});
 
 module.exports = app

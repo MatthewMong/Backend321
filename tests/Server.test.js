@@ -1,10 +1,10 @@
-var app =require('../Server') // Link to your server file
+//var app = require('../Server') // Link to your server file
 /**
  * Start Server.js and then run Server.test.js (alias is npm test)
  */
-app.listen(3000);
+
 const supertest = require('supertest');
-const request = supertest(app);
+const request = supertest('http://localhost:5555/');
 describe('Get All Users', function () {
     it('should return a response with HTTP code 200', function (done) {
         request.get('Users').expect(200, done);
