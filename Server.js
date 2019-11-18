@@ -1,4 +1,4 @@
-const port = 5555;
+const port = 3000;
 const coordIncrem = 1.01;
 const maxCoordVar = 3.00001;
 const numOfUsers2Send = 1;
@@ -335,4 +335,4 @@ const server = app.listen(port, function () {
     const port = server.address().port;
 });
 
-module.exports = app
+module.exports=server;
