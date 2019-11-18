@@ -1,13 +1,17 @@
-// const app = require('../Server') // Link to your server file
-// const supertest = require('supertest')
-// const request = supertest(app)
+var app = require('../Server'); // Link to your server file
+const {MongoClient} = require('mongodb'); // For mongDB testing
+const uri = "mongodb+srv://kswic:rqerBR73CjIcOnaB@test-cluster-323xs.azure.mongodb.net/test?retryWrites=true&w=majority";
+const dbName = "Data";
+const supertest = require('supertest');
+const request = supertest(app);
+
+
 //
-// it('gets the test endpoint', async done => {
-//     const response = await request.get('/test')
-//
-//     expect(response).toBe('pass!')
-//     done()
-// })
+// /**
+//  * Start Server.js and then run Server.test.js (alias is npm test)
+//  */
+// const supertest = require('supertest');
+// const request = supertest(app);
 //
 // describe('Get All Users', function () {
 //     it('should return a response with HTTP code 200', function (done) {
@@ -64,3 +68,41 @@
 //         request.get('Users/5dd1f920fcd2064ba8787a9d').expect(200).expect([], done);
 //     });
 // });
+// describe('GET invalid Event', function () {
+//     it('should return a response with HTTP code 200 and an empty array', function (done) {
+//         request.get('Users/5dd1f920fcd2064ba8787a9d').expect(200).expect([], done);
+//     });
+// });
+
+
+
+describe('GET invalid Event', () => {
+    let connection;
+    let db;
+
+    beforeAll(async () => {
+        __MONGO_URI__=uri;
+        connection = await MongoClient.connect(global.__MONGO_URI__, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
+        __MONGO_DB_NAME__ = dbName;
+        db = await connection.db(global.__MONGO_DB_NAME__);
+    });
+
+    afterAll(async () => {
+        await connection.close();
+        await db.close();
+    });
+
+    it('should return a response with HTTP code 200 and an empty array', async () => {
+        // const users = db.collection("Users");
+        // const mockUser = {_id: "5dd1f920fcd2064ba8787a9d", name: 'John'};
+
+        const res = await request.get('/Users');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toEqual("5da61616f3d9a936c43a5bbd");
+
+    });
+
+});
