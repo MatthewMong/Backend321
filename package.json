@@ -25,10 +25,7 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ],
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "*.{ts,js}"
-    ]
+    "collectCoverage": true
   },
   "scripts": {
     "test": "jest --coverage --colors",

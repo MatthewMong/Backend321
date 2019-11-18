@@ -319,9 +319,9 @@ app.use((err, req, res, next) => {
  * Basic middleware test function
  * should return a valid response if connected
  */
-app.post("/", function (req, res) {
-    res.end();
-});
+app.get('/test', async (req, res) => {
+    res.json({message: 'pass!'})
+})
 
 // TODO: implement updating function/call (to update songe parameter of document/json)
 
@@ -330,9 +330,9 @@ app.post("/", function (req, res) {
  * @param port integer which specifies which port
  * the REST endpoints are accessible at
  */
-const server = app.listen(port, function () {
-    // var host = server.address().address
-    const port = server.address().port;
-});
+// const server = app.listen(port, function () {
+//     // var host = server.address().address
+//     const port = server.address().port;
+// });
 
-module.exports=server;
+module.exports=app;
