@@ -4,7 +4,22 @@ const uri = "mongodb+srv://kswic:rqerBR73CjIcOnaB@test-cluster-323xs.azure.mongo
 const dbName = "Data";
 const supertest = require('supertest');
 const request = supertest(app);
+let connection;
+let db;
 
+beforeAll(async () => {
+    __MONGO_URI__=uri;
+    connection = await MongoClient.connect(global.__MONGO_URI__, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
+    __MONGO_DB_NAME__ = dbName;
+    db = await connection.db(global.__MONGO_DB_NAME__);
+});
+afterAll(async () => {
+    await connection.close();
+    await app.close();
+});
 
 //
 // /**
@@ -77,32 +92,29 @@ const request = supertest(app);
 
 
 describe('GET invalid Event', () => {
-    let connection;
-    let db;
-
-    beforeAll(async () => {
-        __MONGO_URI__=uri;
-        connection = await MongoClient.connect(global.__MONGO_URI__, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
-        __MONGO_DB_NAME__ = dbName;
-        db = await connection.db(global.__MONGO_DB_NAME__);
-    });
-
-    afterAll(async () => {
-        await connection.close();
-        await db.close();
-    });
-
     it('should return a response with HTTP code 200 and an empty array', async () => {
-        // const users = db.collection("Users");
+        const users = db.collection("Users");
         // const mockUser = {_id: "5dd1f920fcd2064ba8787a9d", name: 'John'};
 
-        const res = await request.get('/Users');
+        const res = await request.get('/Users/5dd1f920fcd2064ba8787a9d');
         expect(res.statusCode).toEqual(200);
-        expect(res.body).toEqual("5da61616f3d9a936c43a5bbd");
-
+        expect(res.body).toEqual([]);
     });
 
+    it('should return a User as JSON', async () => {
+        const users = db.collection("Users");
+        const res = await request.get('/Users/5dd1f920fcd2064ba8787a95');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toEqual([{
+            _id: '5dd1f920fcd2064ba8787a95',
+            "FirstName": "DEBUG",
+                "LastName": "DEBUG",
+                "Email": "DEBUG",
+                "DateofBirth": "DEBUG",
+                "Gender": "DEBUG",
+                "UserID": "DEBUG",
+                "FirebaseToken": "DEBUG"
+        }]);
+    });
 });
+

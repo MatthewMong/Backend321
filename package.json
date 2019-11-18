@@ -26,14 +26,16 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ],
+    "testEnvironment": "node",
     "collectCoverage": true,
     "preset": "@shelf/jest-mongodb",
     "collectCoverageFrom": [
       "*.{ts,js}"
-    ]
+    ],
+    "bail": true
   },
   "scripts": {
-    "test": "jest --coverage --colors",
+    "test": "jest --coverage --colors --detectOpenHandles",
     "test:watch": "jest --watch"
   }
 }

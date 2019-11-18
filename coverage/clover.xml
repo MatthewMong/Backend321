@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1574116434167" clover="3.2.0">
-  <project timestamp="1574116434168" name="All files">
-    <metrics statements="103" coveredstatements="39" conditionals="33" coveredconditionals="2" methods="29" coveredmethods="5" elements="165" coveredelements="46" complexity="0" loc="103" ncloc="103" packages="1" files="1" classes="1"/>
-    <file name="Server.js" path="C:\Users\konsw\WebstormProjects\Backend321\Server.js">
-      <metrics statements="103" coveredstatements="39" conditionals="33" coveredconditionals="2" methods="29" coveredmethods="5"/>
+<coverage generated="1574120675091" clover="3.2.0">
+  <project timestamp="1574120675091" name="All files">
+    <metrics statements="103" coveredstatements="40" conditionals="33" coveredconditionals="2" methods="29" coveredmethods="5" elements="165" coveredelements="47" complexity="0" loc="103" ncloc="103" packages="1" files="1" classes="1"/>
+    <file name="Server.js" path="C:\Users\ascar\WebstormProjects\Backend321\Server.js">
+      <metrics statements="103" coveredstatements="40" conditionals="33" coveredconditionals="2" methods="29" coveredmethods="5"/>
       <line num="1" count="1" type="stmt"/>
       <line num="2" count="1" type="stmt"/>
       <line num="3" count="1" type="stmt"/>
@@ -28,12 +28,12 @@
       <line num="73" count="0" type="stmt"/>
       <line num="74" count="0" type="stmt"/>
       <line num="86" count="1" type="stmt"/>
-      <line num="87" count="1" type="stmt"/>
-      <line num="88" count="1" type="stmt"/>
-      <line num="89" count="1" type="stmt"/>
-      <line num="90" count="1" type="stmt"/>
-      <line num="91" count="1" type="stmt"/>
-      <line num="104" count="1" type="stmt"/>
+      <line num="87" count="2" type="stmt"/>
+      <line num="88" count="2" type="stmt"/>
+      <line num="89" count="2" type="stmt"/>
+      <line num="90" count="2" type="stmt"/>
+      <line num="91" count="2" type="stmt"/>
+      <line num="104" count="2" type="stmt"/>
       <line num="106" count="1" type="stmt"/>
       <line num="113" count="1" type="stmt"/>
       <line num="114" count="0" type="stmt"/>
@@ -89,16 +89,16 @@
       <line num="269" count="0" type="stmt"/>
       <line num="271" count="0" type="stmt"/>
       <line num="279" count="1" type="stmt"/>
-      <line num="280" count="1" type="stmt"/>
-      <line num="281" count="1" type="cond" truecount="1" falsecount="1"/>
+      <line num="280" count="0" type="stmt"/>
+      <line num="281" count="0" type="cond" truecount="0" falsecount="2"/>
       <line num="282" count="0" type="stmt"/>
-      <line num="284" count="1" type="stmt"/>
+      <line num="284" count="0" type="stmt"/>
       <line num="295" count="1" type="stmt"/>
-      <line num="296" count="0" type="stmt"/>
-      <line num="297" count="0" type="stmt"/>
-      <line num="298" count="0" type="cond" truecount="0" falsecount="2"/>
+      <line num="296" count="2" type="stmt"/>
+      <line num="297" count="2" type="stmt"/>
+      <line num="298" count="2" type="cond" truecount="1" falsecount="1"/>
       <line num="299" count="0" type="stmt"/>
-      <line num="301" count="0" type="stmt"/>
+      <line num="301" count="2" type="stmt"/>
       <line num="309" count="1" type="stmt"/>
       <line num="310" count="0" type="cond" truecount="0" falsecount="2"/>
       <line num="311" count="0" type="stmt"/>
