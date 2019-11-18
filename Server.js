@@ -1,4 +1,4 @@
-const port = 3000;
+const port = 5555;
 const coordIncrem = 1.01;
 const maxCoordVar = 3.00001;
 const numOfUsers2Send = 1;
@@ -40,13 +40,14 @@ client.connect((err) => {
 
 // firebase cloud messaging stuff
 
-/**
- * Basic notification function for FCM, sends a data packet
- * which is specified by payload to the specified user
- * @param registrationToken string should be retrieved from MongoDB or Device
- * @param payload JSON object to be delivered
- */
-function sendMessage(registrationToken, payload) {
+    /**
+     * Basic notification function for FCM, sends a data packet
+     * which is specified by payload to the specified user
+     * @param registrationToken string should be retrieved from MongoDB or Device
+     * @param payload JSON object to be delivered
+     */
+    function sendMessage(registrationToken, payload)
+{
     const message = {data: payload, token: registrationToken};
     admin.messaging().send(message)
         .then((response) => {
@@ -159,29 +160,31 @@ app.delete("/:collection/:id", function (req, res) {
  * @param callback
  */
 function matchUsers2Events(req, callback) {
-  const interests = req.body.Interests;
-  const latitDecUpper = req.body.latdec + maxCoordVar;
-  const latitDecLower = req.body.latdec - maxCoordVar;
-  const longitDecUpper = req.body.longdec + maxCoordVar;
-  const longitDecLower = req.body.longdec - maxCoordVar;
-  if (interests.length >= 1) {
-    db.collection("Users").find({
-      Interests: {$in: interests},
-      Active: true,
-      longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
-      latdec: {$gte: (latitDecLower), $lte: (latitDecUpper)},
-    }, {projection: {
-        Interests: true,
-        longdec: true,
-        latdec: true
-      }}).toArray((err, result) => {
-      if (err) {
-        //return console.log(err);
-      } else {
-        callback(result);
-      }
-    });
-  }
+    const interests = req.body.Interests;
+    const latitDecUpper = req.body.latdec + maxCoordVar;
+    const latitDecLower = req.body.latdec - maxCoordVar;
+    const longitDecUpper = req.body.longdec + maxCoordVar;
+    const longitDecLower = req.body.longdec - maxCoordVar;
+    if (interests.length >= 1) {
+        db.collection("Users").find({
+            Interests: {$in: interests},
+            Active: true,
+            longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
+            latdec: {$gte: (latitDecLower), $lte: (latitDecUpper)},
+        }, {
+            projection: {
+                Interests: true,
+                longdec: true,
+                latdec: true
+            }
+        }).toArray((err, result) => {
+            if (err) {
+                //return console.log(err);
+            } else {
+                callback(result);
+            }
+        });
+    }
 }
 
 /**
@@ -194,6 +197,7 @@ function matchUsers2Events(req, callback) {
 function isInRange(longDec, latDec, coordVar) {
     return ((longDec <= longDec + coordVar) && (longDec >= longDec - coordVar) && (latDec <= latDec + coordVar) && (latDec >= latDec - coordVar));
 }
+
 /**
  *
  * @param arrayAllUsers
@@ -238,32 +242,32 @@ Parameters in req: name (name of event), Interests (for event), latdec (lat of e
  * attach updated json file in the data package.
  * Will automatically match users and trigger notifications
  */
-app.post("/Events", function(req, res, next) {
-  db.collection("Events").insertOne(req.body, (err, result) => {
-    if (err) {
-      //return console.log(err);
-    }
-    var latDec = req.body.latdec;
-    var longDec = req.body.longdec;
-    var interests = req.body.Interests;
+app.post("/Events", function (req, res, next) {
+    db.collection("Events").insertOne(req.body, (err, result) => {
+        if (err) {
+            //return console.log(err);
+        }
+        var latDec = req.body.latdec;
+        var longDec = req.body.longdec;
+        var interests = req.body.Interests;
 
-    const msg = {
-      EventName: req.body.Name,
-      Location: req.body.Location,
-    };
+        const msg = {
+            EventName: req.body.Name,
+            Location: req.body.Location,
+        };
 
-    matchUsers2Events(req, function(arrayAllUsers){
-      var arraySortedUsers = [];
-      arraySortedUsers = sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
-      var userIDSend = [];
-      for (var i = 0; i < arraySortedUsers.length; i++){
-        // for (var index = 0; index < arraySortedUsers[parseInt(i, 10)].length; index++) {
-            //userIDSend.push(arraySortedUsers[parseInt(i, 10)][parseInt(index, 10)]._id.toString());
-          userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
-        // }
-      }
-      volleyMessages(userIDSend, msg);
-    });
+        matchUsers2Events(req, function (arrayAllUsers) {
+            var arraySortedUsers = [];
+            arraySortedUsers = sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+            var userIDSend = [];
+            for (var i = 0; i < arraySortedUsers.length; i++) {
+                // for (var index = 0; index < arraySortedUsers[parseInt(i, 10)].length; index++) {
+                //userIDSend.push(arraySortedUsers[parseInt(i, 10)][parseInt(index, 10)]._id.toString());
+                userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
+                // }
+            }
+            volleyMessages(userIDSend, msg);
+        });
         res.send(result.insertedId);
     });
 });
@@ -303,20 +307,20 @@ app.get("/:collection/:id", (req, res) => {
  * Standard error handler
  */
 app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.json({
-    error: {
-      message: err.message,
-    },
-  });
+    res.status(err.status || 500);
+    res.json({
+        error: {
+            message: err.message,
+        },
+    });
 });
 
 /**
  * Basic middleware test function
  * should return a valid response if connected
  */
-app.post("/", function(req, res) {
-  res.end();
+app.post("/", function (req, res) {
+    res.end();
 });
 
 // TODO: implement updating function/call (to update songe parameter of document/json)
@@ -326,7 +330,9 @@ app.post("/", function(req, res) {
  * @param port integer which specifies which port
  * the REST endpoints are accessible at
  */
-const server = app.listen(port, function () {
-    // var host = server.address().address
-    const port = server.address().port;
-});
+// const server = app.listen(port, function () {
+//     // var host = server.address().address
+//     const port = server.address().port;
+// });
+
+module.exports = app
