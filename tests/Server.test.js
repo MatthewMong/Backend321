@@ -17,6 +17,7 @@ beforeAll(async () => {
     db = await connection.db(global.__MONGO_DB_NAME__);
 });
 afterAll(async () => {
+    request.get('/close');
     await connection.close();
     //await db.close();
 });

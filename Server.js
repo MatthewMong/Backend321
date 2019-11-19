@@ -319,7 +319,8 @@ app.use((err, req, res, next) => {
  * Basic middleware test function
  * should return a valid response if connected
  */
-app.post("/", function (req, res) {
+app.get("/close", function (req, res) {
+    server.close(3000);
     res.end();
 });
 
