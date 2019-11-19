@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1574126070515" clover="3.2.0">
-  <project timestamp="1574126070515" name="All files">
+<coverage generated="1574127593400" clover="3.2.0">
+  <project timestamp="1574127593400" name="All files">
     <metrics statements="104" coveredstatements="40" conditionals="33" coveredconditionals="2" methods="29" coveredmethods="5" elements="166" coveredelements="47" complexity="0" loc="104" ncloc="104" packages="1" files="1" classes="1"/>
     <file name="Server.js" path="C:\Users\ascar\WebstormProjects\Backend321\Server.js">
       <metrics statements="104" coveredstatements="40" conditionals="33" coveredconditionals="2" methods="29" coveredmethods="5"/>
