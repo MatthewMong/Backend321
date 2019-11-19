@@ -105,68 +105,68 @@ describe('GET invalid Event', () => {
 describe('Complex logic Testing', () => {
 
     // const events = db.collection("Events");
-    it('Should add all users that should be notified of the event', async () => {
+    it('Should add EventUserAdd1 that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res1 = await request.post('/Users').send(mockUsers.mockEventUserAdd1);
         expect(res1.statusCode).toEqual(200);
     });
-    it('Should add all users that should be notified of the event', async () => {
+    it('Should add EventUserAdd2 that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res2 = await request.post('/Users').send(mockUsers.mockEventUserAdd2);
         expect(res2.statusCode).toEqual(200);
     });
-    it('Should add all users that should be notified of the event', async () => {
+    it('Should add EventUserAdd3 that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res3 = await request.post('/Users').send(mockUsers.mockEventUserAdd3);
         expect(res3.statusCode).toEqual(200);
     });
-    it('Should add all users that should be notified of the event', async () => {
+    it('Should add EventUserAdd4 that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res4 = await request.post('/Users').send(mockUsers.mockEventUserAdd4);
         expect(res4.statusCode).toEqual(200);
     });
-    it('Should add all users that should be notified of the event', async () => {
+    it('Should add EventUserAdd5 that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res5 = await request.post('/Users').send(mockUsers.mockEventUserAdd5);
         expect(res5.statusCode).toEqual(200);
     });
-    it('Should add all users that should be notified of the event', async () => {
+    it('Should add EventUserAdd6 that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res6 = await request.post('/Users').send(mockUsers.mockEventUserAdd6);
         expect(res6.statusCode).toEqual(200);
     });
-    it('Should add all users that should be notified of the event', async () => {
+    it('Should add EventUserAdd7 that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res7 = await request.post('/Users').send(mockUsers.mockEventUserAdd7);
         expect(res7.statusCode).toEqual(200);
     });
-    it('Should add all users that should be notified of the event', async () => {
+    it('Should add EventUserAdd8 that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res8 = await request.post('/Users').send(mockUsers.mockEventUserAdd8);
         expect(res8.statusCode).toEqual(200);
         //console.log(res1._data);
     });
-    it('Should add all users that should NOT be notified of the event', async () => {
+    it('Should add EventUserNOAdd1 that should NOT be notified of the event', async () => {
         const users = db.collection("Users");
         const res1 = await request.post('/Users').send(mockUsers.mockEventUserNOAdd1);
         expect(res1.statusCode).toEqual(200);
     });
-    it('Should add all users that should be notified of the event', async () => {
+    it('Should add EventUserNOAdd2 that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res2 = await request.post('/Users').send(mockUsers.mockEventUserNOAdd2);
         expect(res2.statusCode).toEqual(200);
     });
-    it('Should add all users that should be notified of the event', async () => {
+    it('Should add EventUserNOAdd3 that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res3 = await request.post('/Users').send(mockUsers.mockEventUserNOAdd3);
         expect(res3.statusCode).toEqual(200);
     });
-    it('Should add all users that should be notified of the event', async () => {
+    it('Should add EventUserNOAdd4 that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res4 = await request.post('/Users').send(mockUsers.mockEventUserNOAdd4);
         expect(res4.statusCode).toEqual(200);
     });
-    it('Should add event', async () => {
+    it('Should add Complex Logic event', async () => {
         const events = db.collection("Events");
         console.log(mockEvents.mockComplexEvent._id);
         const res = await request.post('/Events').send(mockEvents.mockComplexEventNoID);
@@ -201,6 +201,110 @@ describe('Complex logic Testing', () => {
         expect(arrayUsers).toBe(expectedArray);
 
     });
+    it('Does not add EventUserNOAdd1', async () => {
+        const arraySortedUsers = [];
+        const arrayAllUsers = [];
 
+        for (var key of Object.keys(mockUsers)) {
+            if (mockUsers[key].hasOwnProperty('latdec') && mockUsers[key].hasOwnProperty('Active')) {
+                if (mockUsers[key].Active) {
+                    arrayAllUsers.push(mockUsers[key]);
+                }
+            }
+        }
+        const expectedArray = [
+            mockUsers.mockEventUserAdd1,
+            mockUsers.mockEventUserAdd2,
+            mockUsers.mockEventUserAdd3,
+            mockUsers.mockEventUserAdd4,
+            mockUsers.mockEventUserAdd5,
+            mockUsers.mockEventUserAdd6,
+            mockUsers.mockEventUserAdd7,
+            mockUsers.mockEventUserAdd8];
+        //console.log(arrayAllUsers);
+
+        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+        const present = arrayUsers.includes(mockUsers.mockEventUserNOAdd1);
+        expect(present).toBe(false);
+    });
+
+    it('Does not add EventUserNOAdd2', async () => {
+        const arraySortedUsers = [];
+        const arrayAllUsers = [];
+
+        for (var key of Object.keys(mockUsers)) {
+            if (mockUsers[key].hasOwnProperty('latdec') && mockUsers[key].hasOwnProperty('Active')) {
+                if (mockUsers[key].Active) {
+                    arrayAllUsers.push(mockUsers[key]);
+                }
+            }
+        }
+        const expectedArray = [
+            mockUsers.mockEventUserAdd1,
+            mockUsers.mockEventUserAdd2,
+            mockUsers.mockEventUserAdd3,
+            mockUsers.mockEventUserAdd4,
+            mockUsers.mockEventUserAdd5,
+            mockUsers.mockEventUserAdd6,
+            mockUsers.mockEventUserAdd7,
+            mockUsers.mockEventUserAdd8];
+        //console.log(arrayAllUsers);
+
+        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+        const present = arrayUsers.includes(mockUsers.mockEventUserNOAdd2);
+        expect(present).toBe(false);
+    });
+    it('Does not add EventUserNOAdd3', async () => {
+        const arraySortedUsers = [];
+        const arrayAllUsers = [];
+
+        for (var key of Object.keys(mockUsers)) {
+            if (mockUsers[key].hasOwnProperty('latdec') && mockUsers[key].hasOwnProperty('Active')) {
+                if (mockUsers[key].Active) {
+                    arrayAllUsers.push(mockUsers[key]);
+                }
+            }
+        }
+        const expectedArray = [
+            mockUsers.mockEventUserAdd1,
+            mockUsers.mockEventUserAdd2,
+            mockUsers.mockEventUserAdd3,
+            mockUsers.mockEventUserAdd4,
+            mockUsers.mockEventUserAdd5,
+            mockUsers.mockEventUserAdd6,
+            mockUsers.mockEventUserAdd7,
+            mockUsers.mockEventUserAdd8];
+        //console.log(arrayAllUsers);
+
+        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+        const present = arrayUsers.includes(mockUsers.mockEventUserNOAdd3);
+        expect(present).toBe(false);
+    });
+    it('Does not add EventUserNOAdd4', async () => {
+        const arraySortedUsers = [];
+        const arrayAllUsers = [];
+
+        for (var key of Object.keys(mockUsers)) {
+            if (mockUsers[key].hasOwnProperty('latdec') && mockUsers[key].hasOwnProperty('Active')) {
+                if (mockUsers[key].Active) {
+                    arrayAllUsers.push(mockUsers[key]);
+                }
+            }
+        }
+        const expectedArray = [
+            mockUsers.mockEventUserAdd1,
+            mockUsers.mockEventUserAdd2,
+            mockUsers.mockEventUserAdd3,
+            mockUsers.mockEventUserAdd4,
+            mockUsers.mockEventUserAdd5,
+            mockUsers.mockEventUserAdd6,
+            mockUsers.mockEventUserAdd7,
+            mockUsers.mockEventUserAdd8];
+        //console.log(arrayAllUsers);
+
+        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+        const present = arrayUsers.includes(mockUsers.mockEventUserNOAdd4);
+        expect(present).toBe(false);
+    });
 
 });
