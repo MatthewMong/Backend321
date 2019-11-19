@@ -39,7 +39,6 @@ client.connect((err) => {
 });
 
 // firebase cloud messaging stuff
-
     /**
      * Basic notification function for FCM, sends a data packet
      * which is specified by payload to the specified user
@@ -254,6 +253,7 @@ app.post("/Events", function (req, res, next) {
         const msg = {
             EventName: req.body.Name,
             Location: req.body.Location,
+            id: result.insertedId
         };
 
         matchUsers2Events(req, function (arrayAllUsers) {
@@ -336,3 +336,5 @@ const server = app.listen(port, function () {
 });
 
 module.exports=server;
+
+

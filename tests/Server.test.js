@@ -7,7 +7,6 @@ const request = supertest(app);
 let connection;
 let db;
 
-
 beforeAll(async () => {
     __MONGO_URI__=uri;
     connection = await MongoClient.connect(global.__MONGO_URI__, {
@@ -28,7 +27,12 @@ describe("Ensure server is running tests",() =>{
         expect(response.body).toMatchObject([])
     });
 });
-
+describe("FCM Tests",() =>{
+    it("Send wrong endpoint expect 500", async ()=>{
+        const response = await app.sendMessage("memes");
+        expect(response).toMatchObject([])
+    });
+});
 describe("Event Tests", () =>{
     it('should return a User as JSON', async () => {
         const users = db.collection("Events");
