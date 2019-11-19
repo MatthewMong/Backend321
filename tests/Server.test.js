@@ -18,7 +18,7 @@ beforeAll(async () => {
 });
 afterAll(async () => {
     await connection.close();
-    await app.close();
+    //await db.close();
 });
 
 //
@@ -88,8 +88,16 @@ afterAll(async () => {
 //         request.get('Users/5dd1f920fcd2064ba8787a9d').expect(200).expect([], done);
 //     });
 // });
+//
+describe("Event Tests", () =>{
+    it('should return a response with HTTP code 200 and an empty array', async () => {
+        const users = db.collection("Events");
+        const res = await request.get('/Events/5dc0bff98ca4c153f47afeb0');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toEqual([{"name":"TESTETER","Interests":["aoope", "Basketball", "Basebal"],_id: "5dc0bff98ca4c153f47afeb0","latdec": 49.01,"longdec": 39.001}]);
+    });
 
-
+});
 
 describe('GET invalid Event', () => {
     it('should return a response with HTTP code 200 and an empty array', async () => {
@@ -100,7 +108,6 @@ describe('GET invalid Event', () => {
         expect(res.statusCode).toEqual(200);
         expect(res.body).toEqual([]);
     });
-
     it('should return a User as JSON', async () => {
         const users = db.collection("Users");
         const res = await request.get('/Users/5dd1f920fcd2064ba8787a95');
