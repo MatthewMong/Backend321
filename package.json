@@ -35,7 +35,7 @@
     "bail": true
   },
   "scripts": {
-    "test": "jest --coverage --colors --detectOpenHandles",
+    "test": "jest --coverage --colors --forceExit",
     "test:watch": "jest --watch"
   }
 }

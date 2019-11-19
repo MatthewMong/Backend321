@@ -7,7 +7,7 @@ const request = supertest(app);
 let connection;
 let db;
 
-afterEach(() => app.close());
+
 beforeAll(async () => {
     __MONGO_URI__=uri;
     connection = await MongoClient.connect(global.__MONGO_URI__, {
@@ -91,14 +91,23 @@ afterAll(async () => {
 // });
 //
 describe("Event Tests", () =>{
-    it('should return a response with HTTP code 200 and an empty array', async () => {
-        const users = db.collection("Events");
+    it('should return a response with HTTP code 200 and an Event as JSON', async () => {
+        const events = db.collection("Events");
         const res = await request.get('/Events/5dc0bff98ca4c153f47afeb0');
         expect(res.statusCode).toEqual(200);
         expect(res.body).toEqual([{"name":"TESTETER","Interests":["aoope", "Basketball", "Basebal"],_id: "5dc0bff98ca4c153f47afeb0","latdec": 49.01,"longdec": 39.001}]);
-
     });
-
+    it('should return a response with HTTP code 200 and an empty array', async () => {
+        const events = db.collection("Events");
+        const res = await request.get('/Events/5dc0bff98ca4c153f47afebd');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toEqual([]);
+    });
+    it('should return a response with HTTP code 200 and an empty array', async () => {
+        const users = db.collection("Events");
+        const res = await request.get('/Events');
+        expect(res.statusCode).toEqual(200);
+    });
 });
 
 describe('GET invalid Event', () => {
