@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1574129508800" clover="3.2.0">
-  <project timestamp="1574129508800" name="All files">
-    <metrics statements="104" coveredstatements="43" conditionals="33" coveredconditionals="3" methods="29" coveredmethods="7" elements="166" coveredelements="53" complexity="0" loc="104" ncloc="104" packages="1" files="1" classes="1"/>
+<coverage generated="1574132695812" clover="3.2.0">
+  <project timestamp="1574132695812" name="All files">
+    <metrics statements="103" coveredstatements="43" conditionals="33" coveredconditionals="3" methods="29" coveredmethods="7" elements="165" coveredelements="53" complexity="0" loc="103" ncloc="103" packages="1" files="1" classes="1"/>
     <file name="Server.js" path="C:\Users\ascar\WebstormProjects\Backend321\Server.js">
-      <metrics statements="104" coveredstatements="43" conditionals="33" coveredconditionals="3" methods="29" coveredmethods="7"/>
+      <metrics statements="103" coveredstatements="43" conditionals="33" coveredconditionals="3" methods="29" coveredmethods="7"/>
       <line num="1" count="1" type="stmt"/>
       <line num="2" count="1" type="stmt"/>
       <line num="3" count="1" type="stmt"/>
@@ -104,10 +104,9 @@
       <line num="311" count="0" type="stmt"/>
       <line num="322" count="1" type="stmt"/>
       <line num="323" count="0" type="stmt"/>
-      <line num="324" count="0" type="stmt"/>
-      <line num="334" count="1" type="stmt"/>
-      <line num="336" count="1" type="stmt"/>
-      <line num="339" count="1" type="stmt"/>
+      <line num="333" count="1" type="stmt"/>
+      <line num="335" count="1" type="stmt"/>
+      <line num="338" count="1" type="stmt"/>
     </file>
   </project>
 </coverage>

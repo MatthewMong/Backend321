@@ -320,8 +320,7 @@ app.use((err, req, res, next) => {
  * should return a valid response if connected
  */
 app.get("/test", function (req, res) {
-    server.close();
-    res.end();
+    res.json({message: 'Skrt Skrt'})
 });
 
 // TODO: implement updating function/call (to update songe parameter of document/json)
