@@ -319,8 +319,8 @@ app.use((err, req, res, next) => {
  * Basic middleware test function
  * should return a valid response if connected
  */
-app.post("/", function (req, res) {
-    res.end();
+app.get("/test", function (req, res) {
+    res.json({message: 'Skrt Skrt'})
 });
 
 // TODO: implement updating function/call (to update songe parameter of document/json)
