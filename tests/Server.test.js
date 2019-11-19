@@ -109,18 +109,39 @@ describe('Complex logic Testing', () => {
         const users = db.collection("Users");
         const res1 = await request.post('/Users').send(mockUsers.mockEventUserAdd1);
         expect(res1.statusCode).toEqual(200);
+    });
+    it('Should add all users that should be notified of the event', async () => {
+        const users = db.collection("Users");
         const res2 = await request.post('/Users').send(mockUsers.mockEventUserAdd2);
         expect(res2.statusCode).toEqual(200);
+    });
+    it('Should add all users that should be notified of the event', async () => {
+        const users = db.collection("Users");
         const res3 = await request.post('/Users').send(mockUsers.mockEventUserAdd3);
         expect(res3.statusCode).toEqual(200);
+    });
+    it('Should add all users that should be notified of the event', async () => {
+        const users = db.collection("Users");
         const res4 = await request.post('/Users').send(mockUsers.mockEventUserAdd4);
         expect(res4.statusCode).toEqual(200);
+    });
+    it('Should add all users that should be notified of the event', async () => {
+        const users = db.collection("Users");
         const res5 = await request.post('/Users').send(mockUsers.mockEventUserAdd5);
         expect(res5.statusCode).toEqual(200);
+    });
+    it('Should add all users that should be notified of the event', async () => {
+        const users = db.collection("Users");
         const res6 = await request.post('/Users').send(mockUsers.mockEventUserAdd6);
         expect(res6.statusCode).toEqual(200);
+    });
+    it('Should add all users that should be notified of the event', async () => {
+        const users = db.collection("Users");
         const res7 = await request.post('/Users').send(mockUsers.mockEventUserAdd7);
         expect(res7.statusCode).toEqual(200);
+    });
+    it('Should add all users that should be notified of the event', async () => {
+        const users = db.collection("Users");
         const res8 = await request.post('/Users').send(mockUsers.mockEventUserAdd8);
         expect(res8.statusCode).toEqual(200);
         //console.log(res1._data);
@@ -129,10 +150,19 @@ describe('Complex logic Testing', () => {
         const users = db.collection("Users");
         const res1 = await request.post('/Users').send(mockUsers.mockEventUserNOAdd1);
         expect(res1.statusCode).toEqual(200);
+    });
+    it('Should add all users that should be notified of the event', async () => {
+        const users = db.collection("Users");
         const res2 = await request.post('/Users').send(mockUsers.mockEventUserNOAdd2);
         expect(res2.statusCode).toEqual(200);
+    });
+    it('Should add all users that should be notified of the event', async () => {
+        const users = db.collection("Users");
         const res3 = await request.post('/Users').send(mockUsers.mockEventUserNOAdd3);
         expect(res3.statusCode).toEqual(200);
+    });
+    it('Should add all users that should be notified of the event', async () => {
+        const users = db.collection("Users");
         const res4 = await request.post('/Users').send(mockUsers.mockEventUserNOAdd4);
         expect(res4.statusCode).toEqual(200);
     });
@@ -143,12 +173,12 @@ describe('Complex logic Testing', () => {
         expect(res.statusCode).toEqual(200);
         //console.log(app.userIDSend);
     });
-    it('Sorting Algorithm', async() =>{
-        const arraySortedUsers=[];
+    it('Sorting Algorithm', async () => {
+        const arraySortedUsers = [];
         const arrayAllUsers = [];
 
         for (var key of Object.keys(mockUsers)) {
-            if(mockUsers[key].hasOwnProperty('latdec') && mockUsers[key].hasOwnProperty('Active') ){
+            if (mockUsers[key].hasOwnProperty('latdec') && mockUsers[key].hasOwnProperty('Active')) {
                 if (mockUsers[key].Active) {
                     arrayAllUsers.push(mockUsers[key]);
                 }
