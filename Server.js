@@ -250,6 +250,7 @@ app.post("/Events", function(req, res, next) {
     const msg = {
       EventName: req.body.Name,
       Location: req.body.Location,
+      id: result.insertedId
     };
 
     matchUsers2Events(req, function(arrayAllUsers){
