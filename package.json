@@ -28,6 +28,8 @@
     ],
     "collectCoverage": true,
     "preset": "@shelf/jest-mongodb",
+    "bail": true,
+    "testEnvironment": "node",
     "collectCoverageFrom": [
       "*.{ts,js}"
     ]
