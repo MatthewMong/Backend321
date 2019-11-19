@@ -9,6 +9,7 @@ let db;
 var mockData = require('./model');
 var mockUsers = mockData.Users;
 var mockEvents = mockData.Events;
+const func = require("./../HelperFunctions");
 const coordIncrem = 1.01;
 const maxCoordVar = 3.00001;
 const numOfUsers2Send = 1;
@@ -104,7 +105,7 @@ describe('GET invalid Event', () => {
 describe('Complex logic Testing', () => {
 
     // const events = db.collection("Events");
-    it('Should add all users that are a should be notified of the event', async () => {
+    it('Should add all users that should be notified of the event', async () => {
         const users = db.collection("Users");
         const res1 = await request.post('/Users').send(mockUsers.mockEventUserAdd1);
         expect(res1.statusCode).toEqual(200);
@@ -137,10 +138,38 @@ describe('Complex logic Testing', () => {
     });
     it('Should add event', async () => {
         const events = db.collection("Events");
-        console.log(mockEvents.mockComplexEvent);
+        console.log(mockEvents.mockComplexEvent._id);
         const res = await request.post('/Events').send(mockEvents.mockComplexEventNoID);
         expect(res.statusCode).toEqual(200);
         //console.log(app.userIDSend);
+    });
+    it('Sorting Algorithm', async() =>{
+        const arraySortedUsers=[];
+        const arrayAllUsers = [];
+
+        for (var key of Object.keys(mockUsers)) {
+            if(mockUsers[key].hasOwnProperty('latdec') && mockUsers[key].hasOwnProperty('Active') ){
+                if (mockUsers[key].Active) {
+                    arrayAllUsers.push(mockUsers[key]);
+                }
+            }
+        }
+        const expectedArray = [
+            mockUsers.mockEventUserAdd1,
+            mockUsers.mockEventUserAdd2,
+            mockUsers.mockEventUserAdd3,
+            mockUsers.mockEventUserAdd4,
+            mockUsers.mockEventUserAdd5,
+            mockUsers.mockEventUserAdd6,
+            mockUsers.mockEventUserAdd7,
+            mockUsers.mockEventUserAdd8];
+        //console.log(arrayAllUsers);
+
+        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+
+        //console.log(arrayUsers);
+        expect(arrayUsers).toBe(expectedArray);
+
     });
 
 
