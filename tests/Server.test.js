@@ -27,10 +27,11 @@ describe("Ensure server is running tests",() =>{
         expect(response.body).toMatchObject([])
     });
 });
-describe("FCM Tests",() =>{
-    it("Send wrong endpoint expect 500", async ()=>{
-        const response = await app.sendMessage("memes");
-        expect(response).toMatchObject([])
+describe("Encryption Test",() =>{
+    it('should return a response with HTTP code 200 and an empty array', async () => {
+        //const users = db.collection("Users");
+        const res = await request.get('/test');
+        expect(false).toEqual(true);
     });
 });
 describe("Event Tests", () =>{
@@ -57,14 +58,14 @@ describe("Event Tests", () =>{
         expect(res.statusCode).toEqual(200);
         expect(res.body).toEqual([]);
     });
-    it('should return a response with HTTP code 200 and an empty array', async () => {
+    it('should return a response with HTTP code 200', async () => {
         const users = db.collection("Events");
         const res = await request.get('/Events');
         expect(res.statusCode).toEqual(200);
     });
 });
 
-describe('GET invalid Event', () => {
+describe('User tests', () => {
     it('should return a response with HTTP code 200 and an empty array', async () => {
         const users = db.collection("Users");
         // const mockUser = {_id: "5dd1f920fcd2064ba8787a9d", name: 'John'};

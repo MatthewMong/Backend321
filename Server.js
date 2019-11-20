@@ -320,7 +320,7 @@ app.use((err, req, res, next) => {
  * should return a valid response if connected
  */
 app.get("/test", function (req, res) {
-    res.json({message: 'Skrt Skrt'})
+    res.send(res.protocol);
 });
 
 // TODO: implement updating function/call (to update songe parameter of document/json)
@@ -333,6 +333,7 @@ app.get("/test", function (req, res) {
 const server = app.listen(port, function () {
     // var host = server.address().address
     const port = server.address().port;
+
 });
 
 module.exports=server;
