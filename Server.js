@@ -1,4 +1,5 @@
 const port = 3000;
+const expiryDate = 5;
 
 /**
  *Initiate Firebase Cloud Messaging connection
@@ -71,6 +72,24 @@ function volleyMessages(UserID, payload) {
         });
     });
 }
+
+/**
+ *  Deletes events older than the expiry date
+ * @param req
+ * @param res
+ * @param next
+ */
+const deleteOldEvents = function (req, res, next){
+    var date = new Date();
+    date.setDate(date.getDate()-expiryDate);
+    db.collection("Events").deleteMany({
+        created: {$lte: (date.toJSON())}
+        });
+    next();
+};
+
+app.use(deleteOldEvents);
+
 
 /**
  *
