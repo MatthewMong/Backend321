@@ -180,51 +180,6 @@ function matchUsers2Events(req, callback) {
     });
   }
 }
-
-/**
- *
- * @param longDec
- * @param latDec
- * @param coordVar
- * @returns {boolean}
- */
-function isInRange(longDec, latDec, coordVar) {
-    return ((longDec <= longDec + coordVar) && (longDec >= longDec - coordVar) && (latDec <= latDec + coordVar) && (latDec >= latDec - coordVar));
-}
-/**
- *
- * @param arrayAllUsers
- * @param coordVar
- * @param arrayUsers
- */
-function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers) {
-    return arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar;
-}
-
-/**
- * Recursive function which finds closest matching users to event location
- * @param arrayAllUsers
- * @param arrayUsers
- * @param coordVar
- */
-function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
-    if (endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers)) {
-        return arrayUsers;
-    } else {
-        for (var i = 0; i < arrayAllUsers.length; i++) {
-            var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
-            var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-            if (isInRange(longDec, latDec, coordVar)) {
-                if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
-                    arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
-                }
-            }
-        }
-    }
-    coordVar = coordVar + coordIncrem;
-    return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
-}
-
 /*
 Creates events
 Parameters in req: name (name of event), Interests (for event), latdec (lat of event), longdec (long of event)....
@@ -251,7 +206,7 @@ app.post("/Events", function (req, res, next) {
 
         matchUsers2Events(req, function (arrayAllUsers) {
             var arraySortedUsers = [];
-            arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+            arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, longDec, latDec);
             var userIDSend = [];
             for (var i = 0; i < arraySortedUsers.length; i++) {
                 userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
