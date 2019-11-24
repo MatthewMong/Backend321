@@ -17,7 +17,26 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^24.9.0",
-    "mongodb": "^3.3.2",
-    "nodemon": "^1.19.3"
+    "mongodb": "^3.3.4",
+    "nodemon": "^1.19.3",
+    "supertest": "^4.0.2"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "preset": "@shelf/jest-mongodb",
+    "bail": true,
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "*.{ts,js}"
+    ],
+    "bail": true
+  },
+  "scripts": {
+    "test": "jest --coverage --colors --forceExit",
+    "test:watch": "jest --watch"
   }
 }

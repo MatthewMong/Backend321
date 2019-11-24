@@ -1,7 +1,4 @@
 const port = 3000;
-const coordIncrem = 1.01;
-const maxCoordVar = 3.00001;
-const numOfUsers2Send = 1;
 
 /**
  *Initiate Firebase Cloud Messaging connection
@@ -238,30 +235,29 @@ Parameters in req: name (name of event), Interests (for event), latdec (lat of e
  * attach updated json file in the data package.
  * Will automatically match users and trigger notifications
  */
-app.post("/Events", function(req, res, next) {
-  db.collection("Events").insertOne(req.body, (err, result) => {
-    if (err) {
-      //return console.log(err);
-    }
-    var latDec = req.body.latdec;
-    var longDec = req.body.longdec;
-    var interests = req.body.Interests;
-
-    const msg = {
-      EventName: req.body.Name,
-      Location: req.body.Location,
-      id: result.insertedId
-    };
-
-    matchUsers2Events(req, function(arrayAllUsers) {
-        var arraySortedUsers = [];
-        arraySortedUsers = sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
-        var userIDSend = [];
-        for (var i = 0; i < arraySortedUsers.length; i++) {
-            userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
+app.post("/Events", function (req, res, next) {
+    db.collection("Events").insertOne(req.body, (err, result) => {
+        if (err) {
+            //return console.log(err);
         }
-        volleyMessages(userIDSend, msg);
-    });
+        var latDec = req.body.latdec;
+        var longDec = req.body.longdec;
+        var interests = req.body.Interests;
+
+        const msg = {
+            EventName: req.body.Name,
+            Location: req.body.Location,
+        };
+
+        matchUsers2Events(req, function (arrayAllUsers) {
+            var arraySortedUsers = [];
+            arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+            var userIDSend = [];
+            for (var i = 0; i < arraySortedUsers.length; i++) {
+                userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
+            }
+            volleyMessages(userIDSend, msg);
+        });
         res.send(result.insertedId);
     });
 });
