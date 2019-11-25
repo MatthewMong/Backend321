@@ -39,7 +39,7 @@ describe("Event Tests", () =>{
         const res = await request.post('/Events').send(mockEvents.mockDebugEvent);
 
         expect(res.statusCode).toEqual(200);
-        expect(typeof res.body).toEqual("string");
+        expect(typeof res.body).toEqual("object");
     });
     it('should return a response with HTTP code 200 and an Event as JSON', async () => {
         const events = db.collection("Events");
