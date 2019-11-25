@@ -131,7 +131,7 @@ app.post("/Users", function (req, res) {
         if (err) {
             res.send(err);
         } else {
-            res.send(result.insertedId);
+            res.json({"id":result.insertedId});
         }
     });
 });
@@ -233,7 +233,7 @@ app.post("/Events", function (req, res, next) {
             }
             volleyMessages(userIDSend, msg);
         });
-        res.send(result.insertedId);
+        res.json({"id":result.insertedId});
     });
 });
 
