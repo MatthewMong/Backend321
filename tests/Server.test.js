@@ -78,7 +78,7 @@ describe('GET invalid Event', () => {
         const users = db.collection("Users");
         const res = await request.post('/Users').send(mockUsers.mockAvgUserNoID);
         expect(res.statusCode).toEqual(200);
-        expect(typeof res.body).toEqual("string");
+        expect(typeof res.body).toEqual("object");
     });
     it('Should attempt to update a user and return a valid update', async () => {
         const users = db.collection("Users");
@@ -195,10 +195,11 @@ describe('Complex logic Testing', () => {
             mockUsers.mockEventUserAdd8];
         //console.log(arrayAllUsers);
 
-        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+        arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, 39.01, 49.1);
+
 
         //console.log(arrayUsers);
-        expect(arrayUsers).toBe(expectedArray);
+        expect(arrayUsers).toStrictEqual(expectedArray);
 
     });
     it('Does not add EventUserNOAdd1', async () => {

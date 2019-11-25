@@ -1,4 +1,5 @@
 const port = 3000;
+const expiryDate = 5;
 
 /**
  *Initiate Firebase Cloud Messaging connection
@@ -38,14 +39,13 @@ client.connect((err) => {
 
 // firebase cloud messaging stuff
 
-    /**
-     * Basic notification function for FCM, sends a data packet
-     * which is specified by payload to the specified user
-     * @param registrationToken string should be retrieved from MongoDB or Device
-     * @param payload JSON object to be delivered
-     */
-    function sendMessage(registrationToken, payload)
-{
+/**
+ * Basic notification function for FCM, sends a data packet
+ * which is specified by payload to the specified user
+ * @param registrationToken string should be retrieved from MongoDB or Device
+ * @param payload JSON object to be delivered
+ */
+function sendMessage(registrationToken, payload) {
     const message = {data: payload, token: registrationToken};
     admin.messaging().send(message)
         .then((response) => {
@@ -75,37 +75,22 @@ function volleyMessages(UserID, payload) {
 }
 
 /**
- *
+ *  Deletes events older than the expiry date
  * @param req
- * @param callback
+ * @param res
+ * @param next
  */
-function matchUsers2Events(req, callback) {
-    const interests = req.body.Interests;
-    const latitDecUpper = req.body.latdec + func.maxCoordVar;
-    const latitDecLower = req.body.latdec - func.maxCoordVar;
-    const longitDecUpper = req.body.longdec + func.maxCoordVar;
-    const longitDecLower = req.body.longdec - func.maxCoordVar;
-    if (interests.length >= 1) {
-        db.collection("Users").find({
-            Interests: {$in: interests},
-            Active: true,
-            longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
-            latdec: {$gte: (latitDecLower), $lte: (latitDecUpper)},
-        }, {
-            projection: {
-                Interests: true,
-                longdec: true,
-                latdec: true
-            }
-        }).toArray((err, result) => {
-            if (err) {
-                //return console.log(err);
-            } else {
-                callback(result);
-            }
+const deleteOldEvents = function (req, res, next){
+    var date = new Date();
+    date.setDate(date.getDate()-expiryDate);
+    db.collection("Events").deleteMany({
+        created: {$lte: (date.toJSON())}
         });
-    }
-}
+    next();
+};
+
+app.use(deleteOldEvents);
+
 
 /**
  *
@@ -185,8 +170,36 @@ app.delete("/:collection/:id", function (req, res) {
     });
 });
 
-
-
+/**
+ *
+ * @param req
+ * @param callback
+ */
+function matchUsers2Events(req, callback) {
+  const interests = req.body.Interests;
+  const latitDecUpper = req.body.latdec + func.maxCoordVar;
+  const latitDecLower = req.body.latdec - func.maxCoordVar;
+  const longitDecUpper = req.body.longdec + func.maxCoordVar;
+  const longitDecLower = req.body.longdec - func.maxCoordVar;
+  if (interests.length >= 1) {
+    db.collection("Users").find({
+      Interests: {$in: interests},
+      Active: true,
+      longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
+      latdec: {$gte: (latitDecLower), $lte: (latitDecUpper)},
+    }, {projection: {
+        Interests: true,
+        longdec: true,
+        latdec: true
+      }}).toArray((err, result) => {
+      if (err) {
+        //return console.log(err);
+      } else {
+        callback(result);
+      }
+    });
+  }
+}
 /*
 Creates events
 Parameters in req: name (name of event), Interests (for event), latdec (lat of event), longdec (long of event)....
@@ -213,7 +226,7 @@ app.post("/Events", function (req, res, next) {
 
         matchUsers2Events(req, function (arrayAllUsers) {
             var arraySortedUsers = [];
-            arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+            arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, longDec, latDec);
             var userIDSend = [];
             for (var i = 0; i < arraySortedUsers.length; i++) {
                 userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
@@ -259,20 +272,20 @@ app.get("/:collection/:id", (req, res) => {
  * Standard error handler
  */
 app.use((err, req, res, next) => {
-    res.status(err.status || 500);
-    res.json({
-        error: {
-            message: err.message,
-        },
-    });
+  res.status(err.status || 500);
+  res.json({
+    error: {
+      message: err.message,
+    },
+  });
 });
 
 /**
  * Basic middleware test function
  * should return a valid response if connected
  */
-app.get("/test", function (req, res) {
-    res.json({message: 'Skrt Skrt'})
+app.post("/", function(req, res) {
+  res.end();
 });
 
 // TODO: implement updating function/call (to update songe parameter of document/json)

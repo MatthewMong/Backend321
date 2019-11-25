@@ -38,13 +38,15 @@ function matchUsers2Events(req, callback) {
 
 /**
  *
- * @param longDec
- * @param latDec
- * @param coordVar
+ * @param longDec: longDec of event
+ * @param testlongDec: longDec of User to test if it is in range of event
+ * @param latDec: latDec of event
+ * @param testlatDec: latDec of User to test if it is in range of event
+ * @param coordVar: allowable variablitity in long/latDec
  * @returns {boolean}
  */
-function isInRange(longDec, latDec, coordVar) {
-    return ((longDec <= longDec + coordVar) && (longDec >= longDec - coordVar) && (latDec <= latDec + coordVar) && (latDec >= latDec - coordVar));
+function isInRange(longDec, testlongDec, latDec,testlatDec, coordVar) {
+    return ((testlongDec <= longDec + coordVar) && (testlongDec >= longDec - coordVar) && (testlatDec <= latDec + coordVar) && (testlatDec >= latDec - coordVar));
 }
 
 /**
@@ -63,14 +65,14 @@ function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers) {
  * @param arrayUsers
  * @param coordVar
  */
-function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
+function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec) {
     if (endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers)) {
         return arrayUsers;
     } else {
         for (var i = 0; i < arrayAllUsers.length; i++) {
-            var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
-            var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-            if (isInRange(longDec, latDec, coordVar)) {
+            var testlongDec = arrayAllUsers[parseInt(i, 10)].longdec;
+            var testlatDec = arrayAllUsers[parseInt(i, 10)].latdec;
+            if (isInRange(longDec, testlongDec, latDec, testlatDec, coordVar)) {
                 if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
                     arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
                 }
@@ -78,7 +80,7 @@ function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
         }
     }
     coordVar = coordVar + coordIncrem;
-    return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
+    return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec);
 }
 
 module.exports = {
