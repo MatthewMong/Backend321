@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1574724951681" clover="3.2.0">
-  <project timestamp="1574724951681" name="All files">
+<coverage generated="1574725976804" clover="3.2.0">
+  <project timestamp="1574725976805" name="All files">
     <metrics statements="121" coveredstatements="96" conditionals="37" coveredconditionals="23" methods="32" coveredmethods="22" elements="190" coveredelements="141" complexity="0" loc="121" ncloc="121" packages="1" files="2" classes="2"/>
     <file name="HelperFunctions.js" path="C:\Users\ascar\WebstormProjects\Backend321\HelperFunctions.js">
       <metrics statements="25" coveredstatements="16" conditionals="17" coveredconditionals="13" methods="5" coveredmethods="3"/>
