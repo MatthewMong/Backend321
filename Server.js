@@ -1,7 +1,5 @@
 const port = 3000;
-const coordIncrem = 1.01;
-const maxCoordVar = 3.00001;
-const numOfUsers2Send = 1;
+const expiryDate = 5;
 
 /**
  *Initiate Firebase Cloud Messaging connection
@@ -26,6 +24,7 @@ const app = express();
 app.use(express.json());
 let db;
 const ObjectID = require("mongodb").ObjectID;
+const func = require("./HelperFunctions");
 
 /**
  * Connect to MongoDB server
@@ -39,14 +38,14 @@ client.connect((err) => {
 });
 
 // firebase cloud messaging stuff
-    /**
-     * Basic notification function for FCM, sends a data packet
-     * which is specified by payload to the specified user
-     * @param registrationToken string should be retrieved from MongoDB or Device
-     * @param payload JSON object to be delivered
-     */
-    function sendMessage(registrationToken, payload)
-{
+
+/**
+ * Basic notification function for FCM, sends a data packet
+ * which is specified by payload to the specified user
+ * @param registrationToken string should be retrieved from MongoDB or Device
+ * @param payload JSON object to be delivered
+ */
+function sendMessage(registrationToken, payload) {
     const message = {data: payload, token: registrationToken};
     admin.messaging().send(message)
         .then((response) => {
@@ -74,6 +73,24 @@ function volleyMessages(UserID, payload) {
         });
     });
 }
+
+/**
+ *  Deletes events older than the expiry date
+ * @param req
+ * @param res
+ * @param next
+ */
+const deleteOldEvents = function (req, res, next){
+    var date = new Date();
+    date.setDate(date.getDate()-expiryDate);
+    db.collection("Events").deleteMany({
+        created: {$lte: (date.toJSON())}
+        });
+    next();
+};
+
+app.use(deleteOldEvents);
+
 
 /**
  *
@@ -159,78 +176,30 @@ app.delete("/:collection/:id", function (req, res) {
  * @param callback
  */
 function matchUsers2Events(req, callback) {
-    const interests = req.body.Interests;
-    const latitDecUpper = req.body.latdec + maxCoordVar;
-    const latitDecLower = req.body.latdec - maxCoordVar;
-    const longitDecUpper = req.body.longdec + maxCoordVar;
-    const longitDecLower = req.body.longdec - maxCoordVar;
-    if (interests.length >= 1) {
-        db.collection("Users").find({
-            Interests: {$in: interests},
-            Active: true,
-            longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
-            latdec: {$gte: (latitDecLower), $lte: (latitDecUpper)},
-        }, {
-            projection: {
-                Interests: true,
-                longdec: true,
-                latdec: true
-            }
-        }).toArray((err, result) => {
-            if (err) {
-                //return console.log(err);
-            } else {
-                callback(result);
-            }
-        });
-    }
+  const interests = req.body.Interests;
+  const latitDecUpper = req.body.latdec + func.maxCoordVar;
+  const latitDecLower = req.body.latdec - func.maxCoordVar;
+  const longitDecUpper = req.body.longdec + func.maxCoordVar;
+  const longitDecLower = req.body.longdec - func.maxCoordVar;
+  if (interests.length >= 1) {
+    db.collection("Users").find({
+      Interests: {$in: interests},
+      Active: true,
+      longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
+      latdec: {$gte: (latitDecLower), $lte: (latitDecUpper)},
+    }, {projection: {
+        Interests: true,
+        longdec: true,
+        latdec: true
+      }}).toArray((err, result) => {
+      if (err) {
+        //return console.log(err);
+      } else {
+        callback(result);
+      }
+    });
+  }
 }
-
-/**
- *
- * @param longDec
- * @param latDec
- * @param coordVar
- * @returns {boolean}
- */
-function isInRange(longDec, latDec, coordVar) {
-    return ((longDec <= longDec + coordVar) && (longDec >= longDec - coordVar) && (latDec <= latDec + coordVar) && (latDec >= latDec - coordVar));
-}
-
-/**
- *
- * @param arrayAllUsers
- * @param coordVar
- * @param arrayUsers
- */
-function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers) {
-    return arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar;
-}
-
-/**
- * Recursive function which finds closest matching users to event location
- * @param arrayAllUsers
- * @param arrayUsers
- * @param coordVar
- */
-function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
-    if (endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers)) {
-        return arrayUsers;
-    } else {
-        for (var i = 0; i < arrayAllUsers.length; i++) {
-            var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
-            var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-            if (isInRange(longDec, latDec, coordVar)) {
-                if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
-                    arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
-                }
-            }
-        }
-    }
-    coordVar = coordVar + coordIncrem;
-    return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
-}
-
 /*
 Creates events
 Parameters in req: name (name of event), Interests (for event), latdec (lat of event), longdec (long of event)....
@@ -253,18 +222,14 @@ app.post("/Events", function (req, res, next) {
         const msg = {
             EventName: req.body.Name,
             Location: req.body.Location,
-            id: result.insertedId
         };
 
         matchUsers2Events(req, function (arrayAllUsers) {
             var arraySortedUsers = [];
-            arraySortedUsers = sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+            arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, longDec, latDec);
             var userIDSend = [];
             for (var i = 0; i < arraySortedUsers.length; i++) {
-                // for (var index = 0; index < arraySortedUsers[parseInt(i, 10)].length; index++) {
-                //userIDSend.push(arraySortedUsers[parseInt(i, 10)][parseInt(index, 10)]._id.toString());
                 userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
-                // }
             }
             volleyMessages(userIDSend, msg);
         });
@@ -307,20 +272,20 @@ app.get("/:collection/:id", (req, res) => {
  * Standard error handler
  */
 app.use((err, req, res, next) => {
-    res.status(err.status || 500);
-    res.json({
-        error: {
-            message: err.message,
-        },
-    });
+  res.status(err.status || 500);
+  res.json({
+    error: {
+      message: err.message,
+    },
+  });
 });
 
 /**
  * Basic middleware test function
  * should return a valid response if connected
  */
-app.get("/test", function (req, res) {
-    res.send(res.protocol);
+app.post("/", function(req, res) {
+  res.end();
 });
 
 // TODO: implement updating function/call (to update songe parameter of document/json)
@@ -333,9 +298,6 @@ app.get("/test", function (req, res) {
 const server = app.listen(port, function () {
     // var host = server.address().address
     const port = server.address().port;
-
 });
 
 module.exports=server;
-
-
