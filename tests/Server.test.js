@@ -27,8 +27,8 @@ afterAll(async () => {
 describe("Ensure server is running tests",() =>{
     it("Send wrong endpoint expect 500", async ()=>{
         const response = await request.get('/yeet');
-        expect(response.status).toBe(200);
-        expect(response.body).toMatchObject([])
+        expect(response.status).toBe(500);
+        //expect(response.body).toMatchObject([])
     });
 });
 
