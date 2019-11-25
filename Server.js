@@ -1,7 +1,5 @@
 const port = 3000;
-const coordIncrem = 1.01;
-const maxCoordVar = 3.00001;
-const numOfUsers2Send = 1;
+const expiryDate = 5;
 
 /**
  *Initiate Firebase Cloud Messaging connection
@@ -26,6 +24,7 @@ const app = express();
 app.use(express.json());
 let db;
 const ObjectID = require("mongodb").ObjectID;
+const func = require("./HelperFunctions");
 
 /**
  * Connect to MongoDB server
@@ -74,6 +73,24 @@ function volleyMessages(UserID, payload) {
         });
     });
 }
+
+/**
+ *  Deletes events older than the expiry date
+ * @param req
+ * @param res
+ * @param next
+ */
+const deleteOldEvents = function (req, res, next){
+    var date = new Date();
+    date.setDate(date.getDate()-expiryDate);
+    db.collection("Events").deleteMany({
+        created: {$lte: (date.toJSON())}
+        });
+    next();
+};
+
+app.use(deleteOldEvents);
+
 
 /**
  *
@@ -160,10 +177,10 @@ app.delete("/:collection/:id", function (req, res) {
  */
 function matchUsers2Events(req, callback) {
   const interests = req.body.Interests;
-  const latitDecUpper = req.body.latdec + maxCoordVar;
-  const latitDecLower = req.body.latdec - maxCoordVar;
-  const longitDecUpper = req.body.longdec + maxCoordVar;
-  const longitDecLower = req.body.longdec - maxCoordVar;
+  const latitDecUpper = req.body.latdec + func.maxCoordVar;
+  const latitDecLower = req.body.latdec - func.maxCoordVar;
+  const longitDecUpper = req.body.longdec + func.maxCoordVar;
+  const longitDecLower = req.body.longdec - func.maxCoordVar;
   if (interests.length >= 1) {
     db.collection("Users").find({
       Interests: {$in: interests},
@@ -183,51 +200,6 @@ function matchUsers2Events(req, callback) {
     });
   }
 }
-
-/**
- *
- * @param longDec
- * @param latDec
- * @param coordVar
- * @returns {boolean}
- */
-function isInRange(longDec, latDec, coordVar) {
-    return ((longDec <= longDec + coordVar) && (longDec >= longDec - coordVar) && (latDec <= latDec + coordVar) && (latDec >= latDec - coordVar));
-}
-/**
- *
- * @param arrayAllUsers
- * @param coordVar
- * @param arrayUsers
- */
-function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers) {
-    return arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar;
-}
-
-/**
- * Recursive function which finds closest matching users to event location
- * @param arrayAllUsers
- * @param arrayUsers
- * @param coordVar
- */
-function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers) {
-    if (endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers)) {
-        return arrayUsers;
-    } else {
-        for (var i = 0; i < arrayAllUsers.length; i++) {
-            var longDec = arrayAllUsers[parseInt(i, 10)].longdec;
-            var latDec = arrayAllUsers[parseInt(i, 10)].latdec;
-            if (isInRange(longDec, latDec, coordVar)) {
-                if (!arrayUsers.includes(arrayAllUsers[parseInt(i, 10)])) {
-                    arrayUsers.push(arrayAllUsers[parseInt(i, 10)]);
-                }
-            }
-        }
-    }
-    coordVar = coordVar + coordIncrem;
-    return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers);
-}
-
 /*
 Creates events
 Parameters in req: name (name of event), Interests (for event), latdec (lat of event), longdec (long of event)....
@@ -238,33 +210,29 @@ Parameters in req: name (name of event), Interests (for event), latdec (lat of e
  * attach updated json file in the data package.
  * Will automatically match users and trigger notifications
  */
-app.post("/Events", function(req, res, next) {
-  db.collection("Events").insertOne(req.body, (err, result) => {
-    if (err) {
-      //return console.log(err);
-    }
-    var latDec = req.body.latdec;
-    var longDec = req.body.longdec;
-    var interests = req.body.Interests;
+app.post("/Events", function (req, res, next) {
+    db.collection("Events").insertOne(req.body, (err, result) => {
+        if (err) {
+            //return console.log(err);
+        }
+        var latDec = req.body.latdec;
+        var longDec = req.body.longdec;
+        var interests = req.body.Interests;
 
-    const msg = {
-      EventName: req.body.Name,
-      Location: req.body.Location,
-      id: result.insertedId
-    };
+        const msg = {
+            EventName: req.body.Name,
+            Location: req.body.Location,
+        };
 
-    matchUsers2Events(req, function(arrayAllUsers){
-      var arraySortedUsers = [];
-      arraySortedUsers = sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
-      var userIDSend = [];
-      for (var i = 0; i < arraySortedUsers.length; i++){
-        // for (var index = 0; index < arraySortedUsers[parseInt(i, 10)].length; index++) {
-            //userIDSend.push(arraySortedUsers[parseInt(i, 10)][parseInt(index, 10)]._id.toString());
-          userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
-        // }
-      }
-      volleyMessages(userIDSend, msg);
-    });
+        matchUsers2Events(req, function (arrayAllUsers) {
+            var arraySortedUsers = [];
+            arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, longDec, latDec);
+            var userIDSend = [];
+            for (var i = 0; i < arraySortedUsers.length; i++) {
+                userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
+            }
+            volleyMessages(userIDSend, msg);
+        });
         res.send(result.insertedId);
     });
 });
