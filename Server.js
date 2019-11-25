@@ -24,6 +24,7 @@ const app = express();
 app.use(express.json());
 let db;
 const ObjectID = require("mongodb").ObjectID;
+const func = require("./HelperFunctions");
 
 /**
  * Connect to MongoDB server
