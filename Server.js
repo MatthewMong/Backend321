@@ -176,10 +176,10 @@ app.delete("/:collection/:id", function (req, res) {
  */
 function matchUsers2Events(req, callback) {
   const interests = req.body.Interests;
-  const latitDecUpper = req.body.latdec + maxCoordVar;
-  const latitDecLower = req.body.latdec - maxCoordVar;
-  const longitDecUpper = req.body.longdec + maxCoordVar;
-  const longitDecLower = req.body.longdec - maxCoordVar;
+  const latitDecUpper = req.body.latdec + func.maxCoordVar;
+  const latitDecLower = req.body.latdec - func.maxCoordVar;
+  const longitDecUpper = req.body.longdec + func.maxCoordVar;
+  const longitDecLower = req.body.longdec - func.maxCoordVar;
   if (interests.length >= 1) {
     db.collection("Users").find({
       Interests: {$in: interests},
