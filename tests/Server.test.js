@@ -195,7 +195,7 @@ describe("Complex logic Testing", () => {
             mockUsers.mockEventUserAdd8];
         //console.log(arrayAllUsers);
 
-        arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, 39.01, 49.1, 10);
+        arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, 39.01, 49.01001, 10);
 
 
         //console.log(arrayUsers);
