@@ -34,9 +34,9 @@ client.connect((err) => {
         //return console.log(err);
     }
     db = client.db("Data");
-    msg={"id":"5ddb650c16976566b576b295"};
-    sendMessage("dTf6mjFO9HI:APA91bHWMQENVIp6hQoVwylObS0zDHY3Fu97v23CNskM6Mbi6tzIdT87Th1XTq8Ng2BfqSy4H_PU8uaOn9BkSLE-Y8Gv0LsgAcKbbugGjM8YsVEC8Nk09Vw8fKb_zEfyODWP2I-z9f44",msg)
-    //console.log("successful connect");
+    // msg={"id":"5ddb650c16976566b576b295"};
+    // sendMessage("dTf6mjFO9HI:APA91bHWMQENVIp6hQoVwylObS0zDHY3Fu97v23CNskM6Mbi6tzIdT87Th1XTq8Ng2BfqSy4H_PU8uaOn9BkSLE-Y8Gv0LsgAcKbbugGjM8YsVEC8Nk09Vw8fKb_zEfyODWP2I-z9f44",msg)
+    // //console.log("successful connect");
 });
 
 // firebase cloud messaging stuff
