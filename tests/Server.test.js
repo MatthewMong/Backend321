@@ -195,7 +195,7 @@ describe("Complex logic Testing", () => {
             mockUsers.mockEventUserAdd8];
         //console.log(arrayAllUsers);
 
-        arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, 39.01, 49.1);
+        arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, 39.01, 49.1, 10);
 
 
         //console.log(arrayUsers);
@@ -224,7 +224,7 @@ describe("Complex logic Testing", () => {
             mockUsers.mockEventUserAdd8];
         //console.log(arrayAllUsers);
 
-        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, 39.01, 49.1, 10);
         const present = arrayUsers.includes(mockUsers.mockEventUserNOAdd1);
         expect(present).toBe(false);
     });
@@ -251,7 +251,7 @@ describe("Complex logic Testing", () => {
             mockUsers.mockEventUserAdd8];
         //console.log(arrayAllUsers);
 
-        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, 39.01, 49.1, 10);
         const present = arrayUsers.includes(mockUsers.mockEventUserNOAdd2);
         expect(present).toBe(false);
     });
@@ -277,7 +277,7 @@ describe("Complex logic Testing", () => {
             mockUsers.mockEventUserAdd8];
         //console.log(arrayAllUsers);
 
-        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, 39.01, 49.1, 10);
         const present = arrayUsers.includes(mockUsers.mockEventUserNOAdd3);
         expect(present).toBe(false);
     });
@@ -303,7 +303,7 @@ describe("Complex logic Testing", () => {
             mockUsers.mockEventUserAdd8];
         //console.log(arrayAllUsers);
 
-        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers);
+        const arrayUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, 39.01, 49.1, 10);
         const present = arrayUsers.includes(mockUsers.mockEventUserNOAdd4);
         expect(present).toBe(false);
     });
