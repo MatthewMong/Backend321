@@ -219,6 +219,7 @@ app.post("/Events", function (req, res, next) {
         var latDec = req.body.latdec;
         var longDec = req.body.longdec;
         var interests = req.body.Interests;
+        var numOfUsers2Send  = req.body.TotalSpots;
 
         const msg = {
             "id": result.insertedId,
@@ -226,7 +227,7 @@ app.post("/Events", function (req, res, next) {
 
         matchUsers2Events(req, function (arrayAllUsers) {
             var arraySortedUsers = [];
-            arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, longDec, latDec);
+            arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, longDec, latDec, numOfUsers2Send);
             var userIDSend = [];
             for (var i = 0; i < arraySortedUsers.length; i++) {
                 userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
