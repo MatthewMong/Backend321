@@ -232,7 +232,7 @@ app.post("/Events", function (req, res, next) {
             for (var i = 0; i < arraySortedUsers.length; i++) {
                 await userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
             }
-            await volleyMessages(userIDSend, msg);
+            volleyMessages(userIDSend, msg);
         });
         res.json({"id":result.insertedId});
     });
