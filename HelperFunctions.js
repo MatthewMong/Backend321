@@ -1,6 +1,5 @@
 const coordIncrem = 1.01;
 const maxCoordVar = 3.00001;
-const numOfUsers2Send = 10;
 
 
 /**
@@ -55,7 +54,7 @@ function isInRange(longDec, testlongDec, latDec,testlatDec, coordVar) {
  * @param coordVar
  * @param arrayUsers
  */
-function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers) {
+function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers, numOfUsers2Send) {
     return arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar;
 }
 
@@ -65,7 +64,7 @@ function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers) {
  * @param arrayUsers
  * @param coordVar
  */
-function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec) {
+function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec, numOfUsers2Send) {
     if (endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers)) {
         return arrayUsers;
     } else {
@@ -80,13 +79,12 @@ function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec) 
         }
     }
     coordVar = coordVar + coordIncrem;
-    return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec);
+    return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec, numOfUsers2Send);
 }
 
 module.exports = {
     sortMatchedUsers:sortMatchedUsers,
     matchUsers2Events:matchUsers2Events,
     coordIncrem :coordIncrem,
-    maxCoordVar:maxCoordVar,
-    numOfUsers2Send:numOfUsers2Send
+    maxCoordVar:maxCoordVar
 };
