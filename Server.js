@@ -225,12 +225,12 @@ app.post("/Events", function (req, res, next) {
             "id": result.insertedId,
         };
 
-        matchUsers2Events(req, async function (arrayAllUsers) {
+        matchUsers2Events(req, function (arrayAllUsers) {
             var arraySortedUsers = [];
             arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, longDec, latDec, numOfUsers2Send);
             var userIDSend = [];
             for (var i = 0; i < arraySortedUsers.length; i++) {
-                await userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
+                userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
             }
             volleyMessages(userIDSend, msg);
         });
