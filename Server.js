@@ -1,6 +1,5 @@
 const port = 3000;
 const expiryDate = 5;
-// epstein didnt kill himself
 /**
  *Initiate Firebase Cloud Messaging connection
  * @type {admin}
