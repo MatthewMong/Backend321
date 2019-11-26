@@ -22,7 +22,7 @@ beforeAll(async () => {
     db = await connection.db(dbName);
 });
 afterAll(async () => {
-    await connection.close();
+    //await connection.close();
 });
 describe("Ensure server is running tests",() =>{
     it("Send wrong endpoint expect 500", async ()=>{
