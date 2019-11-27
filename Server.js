@@ -232,7 +232,8 @@ app.post("/Events", function (req, res, next) {
             for (var i = 0; i < arraySortedUsers.length; i++) {
                 userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
             }
-            volleyMessages(userIDSend, msg);
+            volleyMessages(arraySortedUsers, msg);
+            //volleyMessages(userIDSend, msg);
         });
         res.json({"id":result.insertedId});
     });
