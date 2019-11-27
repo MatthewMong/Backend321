@@ -235,7 +235,9 @@ app.post("/Events", function (req, res, next) {
             arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, longDec, latDec);
             var userIDSend = [];
             for (var i = 0; i < arraySortedUsers.length; i++) {
+                if(!arraySortedUsers[parseInt(i, 10)]._id.toString()).equals(req.body._id){
                 userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
+                }
             }
             console.log(typeof userIDSend[1]);
             console.log(typeof userIDSend);
