@@ -70,7 +70,11 @@ function volleyMessages(UserID, payload) {
     UserID.forEach(function (value) {
         const id = new ObjectID(value);
         db.collection("Users").find({_id: id}, {projection: {FirebaseToken: 1, _id: 0}}).toArray((err, result) => {
-            sendMessage(result[0].FirebaseToken, payload);
+            if (err){
+                console.log(err);
+            }else{
+                sendMessage(result[0].FirebaseToken, payload);
+            }
         });
     });
 }
@@ -229,7 +233,7 @@ app.post("/Events", function (req, res, next) {
         //var numOfUsers2Send  = req.body.TotalSpots;
 
         const msg = {
-            "id": result.insertedId,
+            "id": result.insertedId.toString()
         };
 
         matchUsers2Events(req, function (arrayAllUsers) {
@@ -242,8 +246,8 @@ app.post("/Events", function (req, res, next) {
             }
             //volleyMessages(arraySortedUsers, msg);
             console.log(typeof userIDSend[1]);
-            var poop = JSON.parse(userIDSend);
             console.log(typeof poop);
+            
             volleyMessages(userIDSend, msg);
         });
         res.json({"id":result.insertedId});
