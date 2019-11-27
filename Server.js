@@ -241,9 +241,9 @@ app.post("/Events", function (req, res, next) {
                 userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
             }
             //volleyMessages(arraySortedUsers, msg);
-            console.log(typeof userIDSend);
-            userIDSend = JSON.parse(userIDSend);
-            console.log(typeof userIDSend);
+            console.log(typeof userIDSend[1]);
+            var poop = JSON.parse(userIDSend);
+            console.log(typeof poop);
             volleyMessages(userIDSend, msg);
         });
         res.json({"id":result.insertedId});
