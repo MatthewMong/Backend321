@@ -186,10 +186,11 @@ function matchUsers2Events(req, callback) {
       console.log(latitDecLower);
       console.log(longitDecUpper);
   console.log(longitDecLower);
-  console.log(interests);
+  console.log(interests.length);
 
     console.log(req.body);
   if (interests.length >= 1) {
+      console.log("poop");
     db.collection("Users").find({
       Interests: {$in: interests},
       longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
