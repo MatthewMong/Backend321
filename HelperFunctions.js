@@ -2,38 +2,6 @@ const coordIncrem = 1.01;
 const maxCoordVar = 4.001;
 const numOfUsers2Send = 10;
 
-/**
- *
- * @param req
- * @param callback
- */
-function matchUsers2Events(req, callback) {
-    const interests = req.body.Interests;
-    const latitDecUpper = req.body.latdec + maxCoordVar;
-    const latitDecLower = req.body.latdec - maxCoordVar;
-    const longitDecUpper = req.body.longdec + maxCoordVar;
-    const longitDecLower = req.body.longdec - maxCoordVar;
-    if (interests.length >= 1) {
-        db.collection("Users").find({
-            Interests: {$in: interests},
-         
-            longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
-            latdec: {$gte: (latitDecLower), $lte: (latitDecUpper)},
-        }, {
-            projection: {
-                Interests: true,
-                longdec: true,
-                latdec: true
-            }
-        }).toArray((err, result) => {
-            if (err) {
-                //return console.log(err);
-            } else {
-                callback(result);
-            }
-        });
-    }
-}
 
 /**
  *
@@ -54,7 +22,7 @@ function isInRange(longDec, testlongDec, latDec,testlatDec, coordVar) {
  * @param coordVar
  * @param arrayUsers
  */
-function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers, numOfUsers2Send) {
+function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers) {
     return arrayUsers.length >= numOfUsers2Send || arrayUsers.length >= arrayAllUsers.length || coordVar >= maxCoordVar;
 }
 
@@ -64,7 +32,7 @@ function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers, numOfUsers2
  * @param arrayUsers
  * @param coordVar
  */
-function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec, numOfUsers2Send) {
+function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec) {
     if (endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers, numOfUsers2Send)) {
         return arrayUsers;
     } else {
@@ -79,7 +47,7 @@ function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec, 
         }
     }
     coordVar = coordVar + coordIncrem;
-    return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec, numOfUsers2Send);
+    return sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec);
 }
 
 module.exports = {
