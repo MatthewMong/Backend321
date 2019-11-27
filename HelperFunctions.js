@@ -16,7 +16,7 @@ function matchUsers2Events(req, callback) {
     if (interests.length >= 1) {
         db.collection("Users").find({
             Interests: {$in: interests},
-            Active: true,
+         
             longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
             latdec: {$gte: (latitDecLower), $lte: (latitDecUpper)},
         }, {
