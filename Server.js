@@ -242,7 +242,7 @@ app.post("/Events", function (req, res, next) {
             }
             //volleyMessages(arraySortedUsers, msg);
             console.log(typeof userIDSend);
-            userIDSend = Array.from(userIDSend);
+            userIDSend = JSON.parse(userIDSend);
             console.log(typeof userIDSend);
             volleyMessages(userIDSend, msg);
         });
