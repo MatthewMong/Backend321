@@ -246,7 +246,7 @@ app.post("/Events", function (req, res, next) {
             }
             //volleyMessages(arraySortedUsers, msg);
             console.log(typeof userIDSend[1]);
-            console.log(typeof poop);
+            console.log(typeof userIDSend);
             
             volleyMessages(userIDSend, msg);
         });
