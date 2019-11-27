@@ -50,6 +50,7 @@ function sendMessage(registrationToken, payload) {
     const message = {data: payload, token: registrationToken};
     admin.messaging().send(message)
         .then((response) => {
+        console.log(response);
             // Response is a message ID string.
         })
         .catch((error) => {
