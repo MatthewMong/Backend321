@@ -1,5 +1,5 @@
-const coordIncrem = 0.00002;
-const maxCoordVar = 0.08555;
+const coordIncrem = 1.01;
+const maxCoordVar = 4.001;
 
 
 /**
