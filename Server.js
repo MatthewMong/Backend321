@@ -182,6 +182,12 @@ function matchUsers2Events(req, callback) {
   const latitDecLower = req.body.latdec - func.maxCoordVar;
   const longitDecUpper = req.body.longdec + func.maxCoordVar;
   const longitDecLower = req.body.longdec - func.maxCoordVar;
+      console.log(latitDecUpper);
+      console.log(latitDecLower);
+      console.log(longitDecUpper);
+  console.log(longitDecLower);
+  console.log(interests);
+
     console.log(req.body);
   if (interests.length >= 1) {
     db.collection("Users").find({
