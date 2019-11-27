@@ -52,7 +52,6 @@ function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec) 
 
 module.exports = {
     sortMatchedUsers:sortMatchedUsers,
-    matchUsers2Events:matchUsers2Events,
     coordIncrem :coordIncrem,
     maxCoordVar:maxCoordVar,
     numOfUsers2Send:numOfUsers2Send
