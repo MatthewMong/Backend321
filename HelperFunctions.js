@@ -1,6 +1,6 @@
 const coordIncrem = 1.01;
 const maxCoordVar = 4.001;
-
+const numOfUsers2Send = 10;
 
 /**
  *
@@ -86,5 +86,6 @@ module.exports = {
     sortMatchedUsers:sortMatchedUsers,
     matchUsers2Events:matchUsers2Events,
     coordIncrem :coordIncrem,
-    maxCoordVar:maxCoordVar
+    maxCoordVar:maxCoordVar.
+    numOfUsers2Send:numOfUsers2Send
 };
