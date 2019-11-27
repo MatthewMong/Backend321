@@ -186,15 +186,8 @@ function matchUsers2Events(req, callback) {
   const latitDecLower = req.body.latdec - func.maxCoordVar;
   const longitDecUpper = req.body.longdec + func.maxCoordVar;
   const longitDecLower = req.body.longdec - func.maxCoordVar;
-      console.log(latitDecUpper);
-      console.log(latitDecLower);
-      console.log(longitDecUpper);
-  console.log(longitDecLower);
-  console.log(interests.length);
 
-    console.log(req.body);
   if (interests.length >= 1) {
-      console.log("poop");
     db.collection("Users").find({
       Interests: {$in: interests},
       longdec: {$gte: (longitDecLower), $lte: (longitDecUpper)},
@@ -239,15 +232,13 @@ app.post("/Events", function (req, res, next) {
         matchUsers2Events(req, function (arrayAllUsers) {
             var arraySortedUsers = [];
             arraySortedUsers = func.sortMatchedUsers(arrayAllUsers, 0, arraySortedUsers, longDec, latDec);
-            console.log(arraySortedUsers);
             var userIDSend = [];
             for (var i = 0; i < arraySortedUsers.length; i++) {
                 userIDSend.push(arraySortedUsers[parseInt(i, 10)]._id.toString());
             }
-            //volleyMessages(arraySortedUsers, msg);
             console.log(typeof userIDSend[1]);
             console.log(typeof userIDSend);
-            
+            console.log(userIDSend);
             volleyMessages(userIDSend, msg);
         });
         res.json({"id":result.insertedId});
