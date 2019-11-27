@@ -65,7 +65,7 @@ function endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers, numOfUsers2
  * @param coordVar
  */
 function sortMatchedUsers(arrayAllUsers, coordVar, arrayUsers, longDec, latDec, numOfUsers2Send) {
-    if (endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers)) {
+    if (endRecursiveConditions(arrayAllUsers, coordVar, arrayUsers, numOfUsers2Send)) {
         return arrayUsers;
     } else {
         for (var i = 0; i < arrayAllUsers.length; i++) {
