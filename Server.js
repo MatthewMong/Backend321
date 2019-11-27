@@ -240,6 +240,8 @@ app.post("/Events", function (req, res, next) {
             console.log(typeof userIDSend[1]);
             console.log(typeof userIDSend);
             console.log(userIDSend);
+            console.log(msg);
+            console.log(typeof msg);
             volleyMessages(userIDSend, msg);
         });
         res.json({"id":result.insertedId});
